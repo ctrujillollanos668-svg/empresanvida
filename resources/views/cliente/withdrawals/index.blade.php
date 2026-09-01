@@ -1,0 +1,163 @@
+@extends('layouts.cliente')
+
+@section('title', 'Retirar Dinero')
+
+@section('content')
+<div class="max-w-lg mx-auto space-y-6 pb-12">
+
+    <!-- Encabezado -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2">
+                <span>💸</span> Solicitar Retiro
+            </h1>
+            <p class="text-xs text-slate-400 mt-0.5">Transfiere tus ganancias acumuladas a tu cuenta bancaria o billetera.</p>
+        </div>
+        <div class="text-right">
+            <span class="text-[11px] text-slate-400">Disponible:</span>
+            <p class="text-lg font-black text-emerald-400 font-mono">${{ number_format($user->balance, 0, ',', '.') }} COP</p>
+        </div>
+    </div>
+
+    <!-- Formulario de Retiro -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-4">
+        <form method="POST" action="{{ route('cliente.withdrawals.store') }}" class="space-y-4 text-xs">
+            @csrf
+
+            <!-- Monto a Retirar -->
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Monto a Retirar ($ COP)</label>
+                <div class="relative">
+                    <input type="number" id="withdraw_amount_input" step="1000" min="15000" max="{{ $user->balance }}" name="amount" required placeholder="Ej: 50000" oninput="calcWithdrawalFee()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-white font-mono text-base focus:outline-none focus:border-cyan-500">
+                    <button type="button" onclick="setMaxAmount({{ $user->balance }})" class="absolute right-3 top-2.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-bold rounded-xl transition cursor-pointer">
+                        MÁXIMO
+                    </button>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                    <span class="text-amber-400/90 font-semibold">Mínimo de retiro: $15.000 COP</span>
+                    <span class="text-slate-400">Comisión fija: <b class="text-rose-400 font-mono">8%</b></span>
+                </div>
+            </div>
+
+            <!-- Desglose de Comisión y Neto a Recibir en Tiempo Real -->
+            <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800/80 space-y-1.5 text-xs">
+                <div class="flex justify-between text-slate-400">
+                    <span>Monto Solicitado:</span>
+                    <span id="preview_requested" class="font-mono text-slate-200 font-bold">$0 COP</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                    <span>Comisión por transferencia (8%):</span>
+                    <span id="preview_fee" class="font-mono text-rose-400 font-bold">-$0 COP</span>
+                </div>
+                <div class="pt-1.5 border-t border-slate-800 flex justify-between items-center">
+                    <span class="font-bold text-white">Neto que recibirás en tu cuenta:</span>
+                    <span id="preview_net" class="font-mono text-emerald-400 font-black text-sm">$0 COP</span>
+                </div>
+            </div>
+
+            <!-- Método de Recepción Dinámico -->
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Método de Destino</label>
+                <select name="payment_method" required class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-white focus:outline-none focus:border-cyan-500">
+                    @forelse($paymentMethods as $pm)
+                        @php
+                            $icon = [
+                                'purple' => '🟣',
+                                'rose' => '🔴',
+                                'amber' => '🟡',
+                                'emerald' => '🟢',
+                                'blue' => '🔵',
+                            ][$pm->color_theme] ?? '💳';
+                        @endphp
+                        <option value="{{ $pm->name }}">{{ $icon }} {{ $pm->name }}</option>
+                    @empty
+                        <option value="Nequi">🟣 Nequi</option>
+                        <option value="Daviplata">🔴 Daviplata</option>
+                        <option value="Bancolombia">🟡 Bancolombia</option>
+                    @endforelse
+                </select>
+            </div>
+
+            <!-- Datos de Destino -->
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Número de Celular, Cuenta o Billetera Receptora</label>
+                <input type="text" name="wallet_or_account" required placeholder="Ej: 3001234567 o 123-456789-00" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500">
+            </div>
+
+            <!-- Botón de Envío -->
+            @if($user->balance >= 15000)
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-slate-950 font-black rounded-2xl shadow-lg shadow-cyan-500/25 transition active:scale-95 text-xs sm:text-sm cursor-pointer">
+                    ⚡ Solicitar Retiro Inmediato
+                </button>
+            @else
+                <button disabled type="button" class="w-full py-3.5 bg-slate-800 text-slate-500 font-bold rounded-2xl cursor-not-allowed text-xs sm:text-sm">
+                    ⚠️ Saldo insuficiente para retirar (Mínimo $15.000 COP)
+                </button>
+            @endif
+        </form>
+    </div>
+
+    <!-- Historial de Retiros del Cliente -->
+    <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-5">
+        <h3 class="text-xs sm:text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <span>📋</span> Historial de tus Retiros
+        </h3>
+
+        @if($withdrawals->isEmpty())
+            <p class="text-xs text-slate-500 py-6 text-center">Aún no has solicitado ningún retiro.</p>
+        @else
+            <div class="divide-y divide-slate-800/80">
+                @foreach($withdrawals as $with)
+                    <div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-white font-mono text-sm">${{ number_format($with->amount, 0, ',', '.') }} COP</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 font-mono">Comisión: -${{ number_format($with->fee, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 mt-1">
+                                <span>Recibes neto: <strong class="text-emerald-400 font-mono font-extrabold">${{ number_format($with->net_amount, 0, ',', '.') }} COP</strong></span>
+                                <span class="text-slate-500 block text-[10px] mt-0.5">Destino: {{ $with->wallet_or_account }}</span>
+                            </div>
+                        </div>
+                        <div class="text-right flex sm:flex-col items-center sm:items-end justify-between">
+                            @if($with->status === 'pending')
+                                <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 text-[10px] font-bold uppercase border border-amber-500/30">En Revisión</span>
+                            @elseif($with->status === 'approved')
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-bold uppercase border border-emerald-500/30">Pagado</span>
+                            @else
+                                <span class="px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-400 text-[10px] font-bold uppercase border border-rose-500/30">Rechazado</span>
+                            @endif
+                            <span class="block text-[10px] text-slate-500 mt-1">{{ $with->created_at->format('d/m/Y H:i') }}</span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            <div class="mt-3">
+                {{ $withdrawals->links() }}
+            </div>
+        @endif
+    </div>
+
+</div>
+
+<script>
+    function calcWithdrawalFee() {
+        const input = document.getElementById('withdraw_amount_input');
+        const val = parseFloat(input.value) || 0;
+        const feePercent = 0.08; // 8% de comisión
+        const fee = Math.round(val * feePercent);
+        const net = Math.max(0, val - fee);
+
+        document.getElementById('preview_requested').innerText = '$' + val.toLocaleString('es-CO') + ' COP';
+        document.getElementById('preview_fee').innerText = '-$' + fee.toLocaleString('es-CO') + ' COP (8%)';
+        document.getElementById('preview_net').innerText = '$' + net.toLocaleString('es-CO') + ' COP';
+    }
+
+    function setMaxAmount(balance) {
+        document.getElementById('withdraw_amount_input').value = balance;
+        calcWithdrawalFee();
+    }
+
+    document.addEventListener('DOMContentLoaded', calcWithdrawalFee);
+</script>
+@endsection
