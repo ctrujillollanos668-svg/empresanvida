@@ -31,4 +31,21 @@ class Deposit extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getProofUrlAttribute(): ?string
+    {
+        if (!$this->proof_image) {
+            return null;
+        }
+
+        if (str_starts_with($this->proof_image, 'http://') || str_starts_with($this->proof_image, 'https://')) {
+            return $this->proof_image;
+        }
+
+        if (str_starts_with($this->proof_image, 'uploads/')) {
+            return asset($this->proof_image);
+        }
+
+        return asset('storage/' . $this->proof_image);
+    }
 }

@@ -37,7 +37,15 @@ class ClientDepositController extends Controller
         $proofPath = null;
 
         if ($request->hasFile('proof_image')) {
-            $proofPath = $request->file('proof_image')->store('proofs', 'public');
+            $file = $request->file('proof_image');
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            
+            $destinationPath = public_path('uploads/proofs');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $file->move($destinationPath, $fileName);
+            $proofPath = 'uploads/proofs/' . $fileName;
         }
 
         Deposit::create([

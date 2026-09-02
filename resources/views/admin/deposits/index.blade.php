@@ -88,13 +88,13 @@
                                 <td class="py-4 px-4 text-center">
                                     @if($dep->proof_image)
                                         <div class="inline-flex flex-col items-center gap-1.5">
-                                            <button type="button" onclick="openProofModal('{{ asset('storage/' . $dep->proof_image) }}', '{{ $dep->user->name ?? 'Cliente' }}', '${{ number_format($dep->amount, 0, ',', '.') }} COP', '{{ $dep->payment_method }}', '{{ $dep->transaction_hash }}')" class="group relative block w-14 h-14 rounded-xl overflow-hidden border border-slate-700 hover:border-emerald-500 transition shadow-md cursor-pointer">
-                                                <img src="{{ asset('storage/' . $dep->proof_image) }}" alt="Comprobante" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                                            <button type="button" onclick="openProofModal('{{ $dep->proof_url }}', '{{ $dep->user->name ?? 'Cliente' }}', '${{ number_format($dep->amount, 0, ',', '.') }} COP', '{{ $dep->payment_method }}', '{{ $dep->transaction_hash }}')" class="group relative block w-14 h-14 rounded-xl overflow-hidden border border-slate-700 hover:border-emerald-500 transition shadow-md cursor-pointer">
+                                                <img src="{{ $dep->proof_url }}" alt="Comprobante" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
                                                 <div class="absolute inset-0 bg-black/40 group-hover:bg-black/10 flex items-center justify-center text-white text-xs font-bold transition">
                                                     🔍
                                                 </div>
                                             </button>
-                                            <span class="text-[10px] text-emerald-400 font-semibold cursor-pointer" onclick="openProofModal('{{ asset('storage/' . $dep->proof_image) }}', '{{ $dep->user->name ?? 'Cliente' }}', '${{ number_format($dep->amount, 0, ',', '.') }} COP', '{{ $dep->payment_method }}', '{{ $dep->transaction_hash }}')">Ver Captura</span>
+                                            <span class="text-[10px] text-emerald-400 font-semibold cursor-pointer" onclick="openProofModal('{{ $dep->proof_url }}', '{{ $dep->user->name ?? 'Cliente' }}', '${{ number_format($dep->amount, 0, ',', '.') }} COP', '{{ $dep->payment_method }}', '{{ $dep->transaction_hash }}')">Ver Captura</span>
                                         </div>
                                     @else
                                         <span class="text-slate-500 text-[11px] italic">Sin foto adjunta</span>
@@ -135,7 +135,7 @@
                                             </form>
 
                                             <!-- Botón Rechazar que Abre Modal de Motivo -->
-                                            <button type="button" onclick="openRejectModal({{ $dep->id }}, '{{ $dep->user->name ?? 'Cliente' }}', '${{ number_format($dep->amount, 0, ',', '.') }} COP', '{{ $dep->payment_method }}', '{{ $dep->transaction_hash }}', '{{ $dep->proof_image ? asset('storage/' . $dep->proof_image) : '' }}')" class="px-3 py-1.5 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-400 font-bold rounded-xl text-xs transition cursor-pointer">
+                                            <button type="button" onclick="openRejectModal({{ $dep->id }}, '{{ $dep->user->name ?? 'Cliente' }}', '${{ number_format($dep->amount, 0, ',', '.') }} COP', '{{ $dep->payment_method }}', '{{ $dep->transaction_hash }}', '{{ $dep->proof_url ?? '' }}')" class="px-3 py-1.5 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-400 font-bold rounded-xl text-xs transition cursor-pointer">
                                                 ✕ Rechazar
                                             </button>
                                         </div>

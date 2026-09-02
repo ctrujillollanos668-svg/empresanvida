@@ -89,10 +89,26 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/settings', function() { return redirect()->route('admin.payment-methods.index'); })->name('settings.index');
 });
 
-// Ruta de respaldo para servir imágenes de comprobantes y archivos públicos en Wasmer / Cloud
+// Manejador de imágenes subidas para Wasmer / Cloud (garantiza entrega 100% libre de enlaces rotos)
+Route::get('/uploads/{folder}/{filename}', function ($folder, $filename) {
+    $path = public_path('uploads/' . $folder . '/' . $filename);
+    if (!file_exists($path)) {
+        $storagePath = storage_path('app/public/' . $folder . '/' . $filename);
+        if (file_exists($storagePath)) {
+            return response()->file($storagePath);
+        }
+        abort(404);
+    }
+    return response()->file($path);
+})->where('folder', '[a-zA-Z0-9_\-]+')->where('filename', '[a-zA-Z0-9_\-\.]+');
+
 Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
     $path = storage_path('app/public/' . $folder . '/' . $filename);
     if (!file_exists($path)) {
+        $publicPath = public_path('uploads/' . $folder . '/' . $filename);
+        if (file_exists($publicPath)) {
+            return response()->file($publicPath);
+        }
         abort(404);
     }
     return response()->file($path);
