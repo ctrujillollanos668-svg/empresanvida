@@ -58,6 +58,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Gestión de Depósitos / Recargas
     Route::get('/deposits', [AdminDepositController::class, 'index'])->name('deposits.index');
+    Route::get('/deposit-image/{id}', [AdminDepositController::class, 'showImage'])->name('deposits.image');
+    Route::get('/deposit-img/{id}', [AdminDepositController::class, 'showImage'])->name('deposit.image');
     Route::post('/deposits/{id}/approve', [AdminDepositController::class, 'approve'])->name('deposits.approve');
     Route::post('/deposits/{id}/reject', [AdminDepositController::class, 'reject'])->name('deposits.reject');
 

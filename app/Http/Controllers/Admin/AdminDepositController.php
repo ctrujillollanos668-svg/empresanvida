@@ -101,4 +101,24 @@ class AdminDepositController extends Controller
 
         return back()->with('success', 'La solicitud de depósito ha sido rechazada con el motivo: "' . $reason . '"');
     }
+
+    public function showImage($id)
+    {
+        $deposit = Deposit::findOrFail($id);
+
+        $path = storage_path('app/public/' . $deposit->proof_image);
+        if (!file_exists($path)) {
+            $path = storage_path('app/' . $deposit->proof_image);
+        }
+
+        if (!file_exists($path)) {
+            $path = public_path($deposit->proof_image);
+        }
+
+        if (!file_exists($path)) {
+            abort(404, 'Imagen no encontrada.');
+        }
+
+        return response()->file($path);
+    }
 }
