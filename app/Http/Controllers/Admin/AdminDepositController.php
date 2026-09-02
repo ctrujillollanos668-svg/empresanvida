@@ -21,6 +21,31 @@ class AdminDepositController extends Controller
         }
 
         $deposits = $query->paginate(15);
+
+        // Convertir cada comprobante a Base64 para que cargue directamente sin depender de symlinks ni rutas
+        $deposits->getCollection()->transform(function ($deposit) {
+            if ($deposit->proof_image) {
+                $path = storage_path('app/public/' . $deposit->proof_image);
+                if (!file_exists($path)) {
+                    $path = storage_path('app/' . $deposit->proof_image);
+                }
+                if (!file_exists($path)) {
+                    $path = public_path($deposit->proof_image);
+                }
+
+                if (file_exists($path)) {
+                    $type = pathinfo($path, PATHINFO_EXTENSION) ?: 'jpeg';
+                    $data = file_get_contents($path);
+                    $deposit->encoded_image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                } else {
+                    $deposit->encoded_image = null;
+                }
+            } else {
+                $deposit->encoded_image = null;
+            }
+            return $deposit;
+        });
+
         $pendingCount = Deposit::where('status', 'pending')->count();
 
         return view('admin.deposits.index', compact('deposits', 'status', 'pendingCount'));
