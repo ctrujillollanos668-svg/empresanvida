@@ -64,9 +64,14 @@
                     <input id="password" type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 bg-slate-950/70 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <div class="flex items-center gap-2 text-slate-400">
-                    <input type="checkbox" name="remember" id="remember" class="rounded bg-slate-950 border-slate-800 text-emerald-500 focus:ring-emerald-500">
-                    <label for="remember" class="cursor-pointer">Recordarme en este dispositivo</label>
+                <div class="flex items-center justify-between text-[11px] text-slate-400">
+                    <div class="flex items-center gap-1.5">
+                        <input type="checkbox" name="remember" id="remember" class="rounded bg-slate-950 border-slate-800 text-emerald-500 focus:ring-emerald-500">
+                        <label for="remember" class="cursor-pointer">Recordarme</label>
+                    </div>
+                    <button type="button" onclick="openForgotModal()" class="text-emerald-400 hover:text-emerald-300 font-bold transition hover:underline cursor-pointer">
+                        ¿Olvidaste tu contraseña?
+                    </button>
                 </div>
 
                 <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/25 transition active:scale-95 text-xs sm:text-sm cursor-pointer">
@@ -91,34 +96,67 @@
 
                 <div>
                     <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Celular / WhatsApp</label>
-                    <input type="text" name="phone" placeholder="300 1234567" class="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
+                    <input type="tel" name="phone" placeholder="Ej: 3001234567" class="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1 flex items-center justify-between">
-                        <span>Código de Invitación / Referido</span>
-                        <span class="text-[10px] text-emerald-400 font-normal">Opcional</span>
-                    </label>
-                    <input id="ref_code_input" type="text" name="referral_code" value="{{ request('ref') }}" placeholder="Ej: JUANVIP" class="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-emerald-400 font-mono uppercase focus:outline-none focus:border-emerald-500">
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Contraseña</label>
+                    <input type="password" name="password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Contraseña</label>
-                        <input type="password" name="password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Confirmar</label>
-                        <input type="password" name="password_confirmation" required placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
-                    </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Confirmar Contraseña</label>
+                    <input type="password" name="password_confirmation" required placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <button type="submit" class="w-full mt-2 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/25 transition active:scale-95 text-xs sm:text-sm cursor-pointer">
-                    Completar Registro
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Código de Invitación (Opcional)</label>
+                    <input type="text" name="referral_code" value="{{ request('ref') }}" placeholder="Ej: VIPA1B2C3D" class="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-emerald-400 font-mono focus:outline-none focus:border-emerald-500 uppercase">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition active:scale-95 text-xs sm:text-sm cursor-pointer mt-2">
+                    Crear Cuenta y Ganar Bono
                 </button>
             </form>
         </div>
 
+    </div>
+
+    <!-- Modal Recuperar Contraseña por WhatsApp -->
+    <div id="forgotModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl relative text-xs">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-sm">
+                        💬
+                    </div>
+                    <h3 class="text-sm font-black text-white">Recuperar Contraseña</h3>
+                </div>
+                <button type="button" onclick="closeForgotModal()" class="text-slate-400 hover:text-white text-base font-bold transition cursor-pointer">✕</button>
+            </div>
+
+            <p class="text-slate-400 text-[11px] mb-4 leading-relaxed">
+                Ingresa tu <strong>número de celular / WhatsApp</strong> registrado. Te conectaremos con el <strong>Soporte Oficial de FORTEX</strong> para validar tu cuenta y entregarte una nueva contraseña al instante.
+            </p>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider text-[10px] mb-1">Tu Número de Celular / WhatsApp</label>
+                    <div class="flex items-center bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2.5 focus-within:border-emerald-500">
+                        <span class="text-slate-500 font-bold mr-2">🇨🇴 +57</span>
+                        <input type="tel" id="forgotPhoneInput" placeholder="Ej: 3222216725" class="w-full bg-transparent text-white placeholder-slate-600 focus:outline-none font-mono text-xs">
+                    </div>
+                </div>
+
+                <button type="button" onclick="sendWhatsAppRecovery()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-95">
+                    <span>💬</span> Solicitar Clave por WhatsApp
+                </button>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800/80 text-[10px] text-slate-500 text-center">
+                🔒 Atención humana y segura 24/7 sin intermediarios
+            </div>
+        </div>
     </div>
 
     <script>
@@ -141,9 +179,23 @@
             }
         }
 
-        function fillCreds(email, pass) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = pass;
+        function openForgotModal() {
+            document.getElementById('forgotModal').classList.remove('hidden');
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgotModal').classList.add('hidden');
+        }
+
+        function sendWhatsAppRecovery() {
+            const phone = document.getElementById('forgotPhoneInput').value.trim();
+            if (!phone) {
+                alert('Por favor ingresa tu número de celular o WhatsApp');
+                return;
+            }
+            const supportNumber = "{{ env('SUPPORT_WHATSAPP', '573222216725') }}";
+            const msg = encodeURIComponent(`Hola Soporte FORTEX 🟢, solicito recuperar la contraseña de mi cuenta registrada con el celular: ${phone}`);
+            window.open(`https://api.whatsapp.com/send?phone=${supportNumber}&text=${msg}`, '_blank');
         }
 
         // Si la URL tiene ?register=1 o ?ref=..., activar pestaña de registro automáticamente

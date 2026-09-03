@@ -80,6 +80,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::post('/users/{id}/adjust-balance', [AdminUserController::class, 'adjustBalance'])->name('users.adjustBalance');
     Route::post('/users/{id}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggleStatus');
+    Route::post('/users/{id}/password', [AdminUserController::class, 'updatePassword'])->name('users.updatePassword');
 
     // Configuración y CRUD de Métodos de Pago y Códigos QR (Nequi, Daviplata, Bancolombia, etc.)
     Route::get('/payment-methods', [\App\Http\Controllers\Admin\AdminPaymentMethodController::class, 'index'])->name('payment-methods.index');

@@ -85,4 +85,18 @@ class AdminUserController extends Controller
         $state = $user->status === 'active' ? 'activada' : 'bloqueada';
         return back()->with('success', "La cuenta de {$user->name} ha sido {$state}.");
     }
+
+    public function updatePassword(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'password' => 'required|string|min:6',
+        ]);
+
+        $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', "Nueva contraseña asignada a {$user->name} correctamente.");
+    }
 }

@@ -96,6 +96,11 @@
                                             💵 Ajustar Saldo
                                         </button>
 
+                                        <!-- Botón Cambiar Contraseña -->
+                                        <button onclick="openPasswordModal({{ json_encode($u) }})" class="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-400 font-bold rounded-xl text-xs transition cursor-pointer" title="Asignar nueva clave">
+                                            🔑 Clave
+                                        </button>
+
                                         <!-- Botón Bloquear/Desbloquear -->
                                         <form method="POST" action="{{ route('admin.users.toggleStatus', $u->id) }}">
                                             @csrf
@@ -164,12 +169,65 @@
     </div>
 </div>
 
+<!-- Modal Asignar / Cambiar Contraseña -->
+<div id="passwordModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+        <div class="flex items-center justify-between mb-2">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <span>🔑</span> Cambiar Contraseña
+            </h3>
+            <button type="button" onclick="document.getElementById('passwordModal').classList.add('hidden')" class="text-slate-400 hover:text-white text-sm">✕</button>
+        </div>
+        <p class="text-xs text-slate-400 mb-4">
+            Cliente: <strong id="pwdModalUserName" class="text-cyan-400"></strong><br>
+            Contacto: <span id="pwdModalUserPhone" class="text-slate-300 font-mono"></span>
+        </p>
+
+        <form id="passwordForm" method="POST" class="space-y-4 text-xs">
+            @csrf
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1.5">Nueva Contraseña para el Usuario</label>
+                <div class="flex gap-2">
+                    <input type="text" id="newPasswordInput" name="password" required minlength="6" placeholder="Ej: Fortex2026*" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-sm focus:outline-none focus:border-cyan-500">
+                    <button type="button" onclick="generateQuickPassword()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 rounded-xl font-bold whitespace-nowrap" title="Generar clave aleatoria">
+                        🎲 Generar
+                    </button>
+                </div>
+                <span class="text-[10px] text-slate-500 mt-1 block">Mínimo 6 caracteres. Puedes escribir una nueva o presionar «Generar».</span>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
+                <button type="button" onclick="document.getElementById('passwordModal').classList.add('hidden')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-semibold cursor-pointer">Cancelar</button>
+                <button type="submit" class="px-5 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl shadow-lg cursor-pointer">Guardar Clave</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     function openBalanceModal(user) {
         document.getElementById('balanceForm').action = '/admin/users/' + user.id + '/adjust-balance';
         document.getElementById('modalUserName').innerText = user.name;
         document.getElementById('modalUserBalance').innerText = '$' + Math.round(parseFloat(user.balance)).toLocaleString('es-CO') + ' COP';
         document.getElementById('balanceModal').classList.remove('hidden');
+    }
+
+    function openPasswordModal(user) {
+        document.getElementById('passwordForm').action = '/admin/users/' + user.id + '/password';
+        document.getElementById('pwdModalUserName').innerText = user.name;
+        document.getElementById('pwdModalUserPhone').innerText = (user.phone ? '📞 ' + user.phone + ' | ' : '') + '✉️ ' + user.email;
+        document.getElementById('newPasswordInput').value = '';
+        document.getElementById('passwordModal').classList.remove('hidden');
+    }
+
+    function generateQuickPassword() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let pass = 'Fortex';
+        for (let i = 0; i < 4; i++) {
+            pass += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        pass += '*';
+        document.getElementById('newPasswordInput').value = pass;
     }
 </script>
 @endsection
