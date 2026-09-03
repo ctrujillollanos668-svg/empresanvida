@@ -314,7 +314,7 @@
             <a href="https://t.me/" target="_blank" class="w-full py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-bold rounded-xl flex items-center justify-center gap-2 transition">
                 <span>✈️</span> Canal Oficial en Telegram
             </a>
-            <a href="https://api.whatsapp.com/send?phone={{ env('SUPPORT_WHATSAPP', '573222216725') }}&text={{ urlencode('Hola Soporte FORTEX 🟢, requiero asesoría con mi cuenta.') }}" target="_blank" class="w-full py-3 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl flex items-center justify-center gap-2 transition">
+            <a href="https://api.whatsapp.com/send?phone={{ env('SUPPORT_WHATSAPP', '573117944193') }}&text={{ urlencode('Hola Soporte FORTEX 🟢, requiero asesoría con mi cuenta.') }}" target="_blank" class="w-full py-3 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl flex items-center justify-center gap-2 transition">
                 <span>💬</span> Asesor Oficial WhatsApp
             </a>
         </div>

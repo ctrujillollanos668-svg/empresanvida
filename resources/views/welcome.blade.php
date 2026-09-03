@@ -930,7 +930,7 @@
                 alert('Por favor ingresa tu número de celular o WhatsApp');
                 return;
             }
-            const supportNumber = "{{ env('SUPPORT_WHATSAPP', '573222216725') }}";
+            const supportNumber = "{{ env('SUPPORT_WHATSAPP', '573117944193') }}";
             const msg = encodeURIComponent(`Hola Soporte FORTEX 🟢, solicito recuperar la contraseña de mi cuenta registrada con el celular: ${phone}`);
             window.open(`https://api.whatsapp.com/send?phone=${supportNumber}&text=${msg}`, '_blank');
         }
