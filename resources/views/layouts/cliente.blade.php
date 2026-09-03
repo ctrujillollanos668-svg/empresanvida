@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Mi Cuenta') - NVIDIA.VIP</title>
-    <link rel="icon" type="image/jpeg" href="{{ asset('img/Nvidia.jpg') }}">
+    <title>@yield('title', 'Mi Cuenta') - NVIDA.VIP</title>
+    <link rel="icon" type="image/jpeg" href="{{ asset('img/nvida.jpg') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,10 +54,10 @@
             <!-- Logo -->
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
                 <div class="w-9 h-9 rounded-xl bg-black border border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-lg shadow-emerald-500/25">
-                    <img src="{{ asset('img/Nvidia.jpg') }}" alt="Logo" class="w-full h-full object-cover">
+                    <img src="{{ asset('img/nvida.jpg') }}" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
-                    <span class="text-sm sm:text-base font-extrabold text-white leading-none block">NVIDIA<span class="text-emerald-400">.VIP</span></span>
+                    <span class="text-sm sm:text-base font-extrabold text-white leading-none block">NVIDA<span class="text-emerald-400">.VIP</span></span>
                     <span class="text-[9px] text-emerald-400 font-bold uppercase tracking-wider hidden sm:inline">Servidor VIP</span>
                 </div>
             </a>
