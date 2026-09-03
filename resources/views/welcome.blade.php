@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PYRAMID.VIP 🔺 | Plataforma Oficial de Inversión y Red de Rendimientos</title>
+    <title>NVIDIA.VIP ⚡ | Plataforma Oficial de Cómputo y Rendimientos</title>
+    <link rel="icon" type="image/jpeg" href="{{ asset('img/Nvidia.jpg') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -87,11 +88,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- Logo Oficial -->
             <a href="/" class="flex items-center gap-3 group">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-white text-2xl shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-transform">
-                    🔺
+                <div class="w-12 h-12 rounded-2xl bg-black border border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-transform">
+                    <img src="{{ asset('img/Nvidia.jpg') }}" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
-                    <span class="text-xl font-extrabold tracking-tight text-white block leading-none">PYRAMID<span class="text-emerald-400">.VIP</span></span>
+                    <span class="text-xl font-extrabold tracking-tight text-white block leading-none">NVIDIA<span class="text-emerald-400">.VIP</span></span>
                     <span class="text-[10px] uppercase tracking-widest text-emerald-400/90 font-bold flex items-center gap-1 mt-0.5">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Plataforma Verificada
                     </span>
@@ -635,11 +636,11 @@
     <footer class="border-t border-slate-900 bg-slate-950 py-12 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2">
-                <span class="text-xl">🔺</span>
-                <span class="font-bold text-slate-200">PYRAMID.VIP</span>
-                <span>— Sistema Multi-Nivel de Rendimientos y Referidos en COP</span>
+                <img src="{{ asset('img/Nvidia.jpg') }}" alt="Logo" class="w-6 h-6 rounded-md object-cover border border-slate-800">
+                <span class="font-bold text-slate-200">NVIDIA.VIP</span>
+                <span>— Sistema Oficial de Rendimientos de Cómputo en COP</span>
             </div>
-            <p>© 2026 PYRAMID.VIP. Todos los derechos reservados.</p>
+            <p>© 2026 NVIDIA.VIP. Todos los derechos reservados.</p>
         </div>
     </footer>
 

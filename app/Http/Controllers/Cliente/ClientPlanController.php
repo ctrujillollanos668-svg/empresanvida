@@ -95,7 +95,7 @@ class ClientPlanController extends Controller
             ->with('success', '🎉 ¡Felicidades! Has activado el ' . $plan->name . '. Tu primer rendimiento de 24 horas ya comenzó a correr.');
     }
 
-    public function claimDaily($id)
+    public function claimDaily(Request $request, $id)
     {
         $user = Auth::user();
         $userPlan = UserPlan::where('user_id', $user->id)
@@ -107,10 +107,20 @@ class ClientPlanController extends Controller
             $seconds = $userPlan->secondsUntilNextClaim();
             $hours = floor($seconds / 3600);
             $minutes = floor(($seconds % 3600) / 60);
-            return back()->with('error', "⏳ Debes esperar exactamente 24 horas entre reclamos. Podrás reclamar nuevamente en {$hours}h {$minutes}m.");
+            $errorMsg = "⏳ Debes esperar exactamente 24 horas entre reclamos. Podrás reclamar nuevamente en {$hours}h {$minutes}m.";
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMsg,
+                ], 422);
+            }
+
+            return back()->with('error', $errorMsg);
         }
 
-        DB::transaction(function () use ($user, $userPlan) {
+        $earning = 0;
+        DB::transaction(function () use ($user, $userPlan, &$earning) {
             $earning = $userPlan->daily_earning;
 
             // Ajustar si el reclamo excede el tope máximo
@@ -144,6 +154,25 @@ class ClientPlanController extends Controller
             ]);
         });
 
-        return back()->with('success', '💰 ¡Ganancia de $' . number_format($userPlan->daily_earning, 0, ',', '.') . ' COP acreditada a tu saldo disponible!');
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => '¡Ganancia acreditada correctamente!',
+                'earning' => $earning,
+                'earning_formatted' => number_format($earning, 0, ',', '.'),
+                'new_balance' => $user->balance,
+                'new_balance_formatted' => number_format($user->balance, 0, ',', '.'),
+                'earned_so_far' => $userPlan->earned_so_far,
+                'earned_so_far_formatted' => number_format($userPlan->earned_so_far, 0, ',', '.'),
+                'max_earning' => $userPlan->max_earning,
+                'max_earning_formatted' => number_format($userPlan->max_earning, 0, ',', '.'),
+                'percent' => $userPlan->max_earning > 0 ? min(100, round(($userPlan->earned_so_far / $userPlan->max_earning) * 100)) : 0,
+                'next_seconds' => $userPlan->secondsUntilNextClaim(),
+                'status' => $userPlan->status,
+            ]);
+        }
+
+        // Si fue una petición estándar por formulario, no mostramos alerta invasiva
+        return back();
     }
 }

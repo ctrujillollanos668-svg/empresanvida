@@ -68,13 +68,13 @@
                             @csrf
                             @method('DELETE')
                             <button type="button" onclick="confirmCustomAction({
-                                title: '¿Eliminar Cuenta de Pago?',
-                                html: 'Se eliminará la cuenta <b class=\'text-rose-400\'>{{ $pm->name }} ({{ $pm->account_number }})</b> de forma permanente.',
+                                title: '¿Eliminar Método de Pago?',
+                                html: 'Se eliminará el método <b class=\'text-rose-400\'>{{ $pm->name }}</b> de forma permanente.',
                                 icon: 'warning',
                                 confirmText: '🗑️ Sí, Eliminar',
                                 confirmColor: '#f43f5e',
                                 formId: 'del-pm-{{ $pm->id }}'
-                            })" title="Eliminar Cuenta" class="p-2 rounded-xl bg-slate-950 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition cursor-pointer text-xs">
+                            })" title="Eliminar Método" class="p-2 rounded-xl bg-slate-950 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition cursor-pointer text-xs">
                                 🗑️ Eliminar
                             </button>
                         </form>
@@ -94,22 +94,26 @@
                             @endif
                         </div>
 
-                        <!-- Datos del titular y número -->
-                        <div class="flex-1 text-xs space-y-1 w-full">
+                        <!-- Datos del titular y estado -->
+                        <div class="flex-1 text-xs space-y-1.5 w-full">
                             <div class="flex justify-between items-center text-slate-400">
-                                <span>Número / Cuenta:</span>
-                                <span class="font-mono font-bold text-white text-sm">{{ $pm->account_number }}</span>
+                                <span>Titular (Visible al Cliente):</span>
+                                <span class="font-bold text-white text-sm">{{ $pm->account_holder ?? 'Sin titular' }}</span>
                             </div>
-                            @if($pm->account_holder)
-                                <div class="flex justify-between items-center text-slate-400">
-                                    <span>Titular:</span>
-                                    <span class="font-semibold text-slate-200">{{ $pm->account_holder }}</span>
-                                </div>
-                            @endif
-                            @if($pm->account_type)
-                                <div class="flex justify-between items-center text-slate-400">
-                                    <span>Tipo:</span>
-                                    <span class="text-slate-300">{{ $pm->account_type }}</span>
+
+                            <div class="flex justify-between items-center text-slate-400">
+                                <span>Código QR:</span>
+                                @if($pm->qr_image)
+                                    <span class="text-emerald-400 font-bold text-[11px] flex items-center gap-1">✅ QR Activo</span>
+                                @else
+                                    <span class="text-amber-400 font-bold text-[11px] flex items-center gap-1">⚠️ Sin QR (Sube uno)</span>
+                                @endif
+                            </div>
+
+                            @if($pm->account_number)
+                                <div class="flex justify-between items-center text-slate-500 text-[11px]">
+                                    <span>Ref. Interna:</span>
+                                    <span class="font-mono text-slate-400">{{ $pm->account_number }}</span>
                                 </div>
                             @endif
                         </div>
@@ -187,25 +191,29 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Número de Cuenta / Celular</label>
-                    <input type="text" name="account_number" required placeholder="Ej: 3117944193" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Tipo de Cuenta (Opcional)</label>
-                    <input type="text" name="account_type" placeholder="Ej: Ahorros, Celular, TRC20" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
-                </div>
-            </div>
-
             <div>
-                <label class="block font-semibold text-slate-300 mb-1">Nombre del Titular de la Cuenta</label>
+                <label class="block font-semibold text-slate-300 mb-1">Nombre del Titular de la Cuenta <span class="text-emerald-400 font-bold">* (Visible al cliente)</span></label>
                 <input type="text" name="account_holder" placeholder="Ej: Carlos Trujillo" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
             </div>
 
             <div>
-                <label class="block font-semibold text-slate-300 mb-1">Imagen del Código QR (Opcional)</label>
+                <label class="block font-semibold text-slate-300 mb-1 flex items-center justify-between">
+                    <span>Imagen del Código QR <span class="text-emerald-400 font-bold">* (Recomendado)</span></span>
+                    <span class="text-[10px] text-slate-500">PNG, JPG, WEBP</span>
+                </label>
                 <input type="file" name="qr_image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-500/20 file:text-emerald-300 hover:file:bg-emerald-500/30 cursor-pointer">
+                <span class="text-[10px] text-slate-500 mt-1 block">Sube el código QR que los clientes escanearán para transferir.</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-1 border-t border-slate-800/60">
+                <div>
+                    <label class="block font-semibold text-slate-400 mb-1 text-[11px]">N° de Cuenta / Celular (Opcional)</label>
+                    <input type="text" name="account_number" placeholder="Opcional (Uso interno)" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-xs focus:outline-none focus:border-slate-700">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-400 mb-1 text-[11px]">Tipo de Cuenta (Opcional)</label>
+                    <input type="text" name="account_type" placeholder="Ej: Ahorros, Celular" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs focus:outline-none focus:border-slate-700">
+                </div>
             </div>
 
             <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition active:scale-95 text-xs sm:text-sm cursor-pointer mt-4">
@@ -227,7 +235,7 @@
         <h3 class="text-xl font-black text-white mb-1 flex items-center gap-2">
             <span>✏️</span> Editar Cuenta de Pago
         </h3>
-        <p class="text-xs text-slate-400 mb-5">Actualiza el número, titular o cambia la imagen del código QR.</p>
+        <p class="text-xs text-slate-400 mb-5">Actualiza el titular o cambia la imagen del código QR que verán los clientes.</p>
 
         <form id="editForm" method="POST" action="" enctype="multipart/form-data" class="space-y-4 text-xs">
             @csrf
@@ -261,25 +269,32 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Número de Cuenta / Celular</label>
-                    <input type="text" id="edit_account_number" name="account_number" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Tipo de Cuenta (Opcional)</label>
-                    <input type="text" id="edit_account_type" name="account_type" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
-                </div>
-            </div>
-
             <div>
-                <label class="block font-semibold text-slate-300 mb-1">Nombre del Titular de la Cuenta</label>
+                <label class="block font-semibold text-slate-300 mb-1">Nombre del Titular de la Cuenta <span class="text-emerald-400 font-bold">* (Visible al cliente)</span></label>
                 <input type="text" id="edit_account_holder" name="account_holder" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500">
             </div>
 
             <div>
-                <label class="block font-semibold text-slate-300 mb-1">Subir / Reemplazar Imagen del QR</label>
+                <label class="block font-semibold text-slate-300 mb-1 flex items-center justify-between">
+                    <span>Subir / Reemplazar Imagen del QR</span>
+                    <span class="text-[10px] text-slate-500">PNG, JPG, WEBP</span>
+                </label>
+                <div id="edit_qr_preview" class="mb-2 hidden">
+                    <span class="text-[10px] text-slate-400 block mb-1">QR actual cargado:</span>
+                    <img id="edit_qr_img" src="" class="w-20 h-20 object-contain rounded-xl border border-slate-800 p-1 bg-slate-950">
+                </div>
                 <input type="file" name="qr_image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-500/20 file:text-emerald-300 hover:file:bg-emerald-500/30 cursor-pointer">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-1 border-t border-slate-800/60">
+                <div>
+                    <label class="block font-semibold text-slate-400 mb-1 text-[11px]">N° de Cuenta / Celular (Opcional)</label>
+                    <input type="text" id="edit_account_number" name="account_number" placeholder="Opcional (Uso interno)" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-xs focus:outline-none focus:border-slate-700">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-400 mb-1 text-[11px]">Tipo de Cuenta (Opcional)</label>
+                    <input type="text" id="edit_account_type" name="account_type" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs focus:outline-none focus:border-slate-700">
+                </div>
             </div>
 
             <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition active:scale-95 text-xs sm:text-sm cursor-pointer mt-4">
@@ -305,6 +320,16 @@
         document.getElementById('edit_account_number').value = pm.account_number || '';
         document.getElementById('edit_account_type').value = pm.account_type || '';
         document.getElementById('edit_account_holder').value = pm.account_holder || '';
+
+        const previewContainer = document.getElementById('edit_qr_preview');
+        const previewImg = document.getElementById('edit_qr_img');
+        if (pm.qr_image && pm.qr_image.trim() !== '') {
+            previewContainer.classList.remove('hidden');
+            previewImg.src = `/storage/${pm.qr_image}`;
+        } else {
+            previewContainer.classList.add('hidden');
+            previewImg.src = '';
+        }
 
         document.getElementById('editModal').classList.remove('hidden');
     }

@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
 // Rutas del Panel de Administrador
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/notifications/check', [AdminDashboardController::class, 'checkNotifications'])->name('notifications.check');
 
     // Gestión de Depósitos / Recargas
     Route::get('/deposits', [AdminDepositController::class, 'index'])->name('deposits.index');

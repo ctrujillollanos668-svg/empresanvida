@@ -96,6 +96,7 @@ class RewardController extends Controller
             $validPromoCodes = [
                 'VIP2026' => 5000,
                 'BONO777' => 3000,
+                'NVIDIA' => 2500,
                 'PYRAMID' => 2500,
                 'PLATA' => 2000,
                 'NEQUI' => 1500,

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Mi Cuenta') - PYRAMID VIP</title>
+    <title>@yield('title', 'Mi Cuenta') - NVIDIA.VIP</title>
+    <link rel="icon" type="image/jpeg" href="{{ asset('img/Nvidia.jpg') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,12 +53,12 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Logo -->
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 text-lg font-black shadow-lg shadow-emerald-500/25">
-                    🔺
+                <div class="w-9 h-9 rounded-xl bg-black border border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-lg shadow-emerald-500/25">
+                    <img src="{{ asset('img/Nvidia.jpg') }}" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
-                    <span class="text-sm sm:text-base font-extrabold text-white leading-none block">PYRAMID<span class="text-emerald-400">.VIP</span></span>
-                    <span class="text-[9px] text-emerald-400 font-bold uppercase tracking-wider hidden sm:inline">Miembro VIP</span>
+                    <span class="text-sm sm:text-base font-extrabold text-white leading-none block">NVIDIA<span class="text-emerald-400">.VIP</span></span>
+                    <span class="text-[9px] text-emerald-400 font-bold uppercase tracking-wider hidden sm:inline">Servidor VIP</span>
                 </div>
             </a>
 
@@ -85,7 +86,7 @@
                 <!-- Chip de Saldo Rápido -->
                 <a href="{{ route('cliente.deposits.index') }}" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-white hover:border-emerald-500/40 transition">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-emerald-400 font-mono font-black">${{ number_format(Auth::user()->balance, 0, ',', '.') }}</span>
+                    <span class="text-emerald-400 font-mono font-black user-balance-value">${{ number_format(Auth::user()->balance, 0, ',', '.') }}</span>
                     <span class="text-[9px] text-slate-500">COP</span>
                 </a>
 

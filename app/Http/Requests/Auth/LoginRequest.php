@@ -50,6 +50,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        if (Auth::user()->status === 'blocked') {
+            Auth::logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => '🚫 Esta cuenta se encuentra suspendida por la administración. Comunícate con Soporte Oficial.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

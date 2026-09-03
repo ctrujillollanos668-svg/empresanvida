@@ -11,7 +11,7 @@
             <h1 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2">
                 <span>➕</span> Recargar Saldo
             </h1>
-            <p class="text-xs text-slate-400 mt-0.5">Transfiere o escanea el QR a cualquiera de las siguientes cuentas y reporta tu comprobante.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Transfiere escaneando el código QR oficial a cualquiera de las siguientes cuentas y reporta tu comprobante.</p>
         </div>
         <div class="text-right">
             <span class="text-[11px] text-slate-400">Saldo Actual:</span>
@@ -32,8 +32,8 @@
                 ][$pm->color_theme] ?? ['badge' => 'bg-slate-800 text-slate-300 border-slate-700', 'icon' => '💳', 'btn' => 'bg-slate-800 hover:bg-slate-700 text-white'];
             @endphp
 
-            <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 relative overflow-hidden shadow-xl flex flex-col justify-between">
-                <div>
+            <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 relative overflow-hidden shadow-xl flex flex-col justify-between items-center text-center">
+                <div class="w-full">
                     <div class="flex items-center justify-between mb-3">
                         <span class="px-2.5 py-0.5 rounded-full {{ $colorTheme['badge'] }} border text-[10px] font-extrabold uppercase">
                             {{ $pm->name }}
@@ -41,20 +41,28 @@
                         <span class="text-2xl">{{ $colorTheme['icon'] }}</span>
                     </div>
 
-                    <p class="text-[11px] text-slate-400">{{ $pm->account_type ? $pm->account_type . ':' : 'Número / Cuenta:' }}</p>
-                    
-                    <div class="flex items-center justify-between mt-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                        <span class="font-mono text-xs sm:text-sm font-bold text-white truncate max-w-[160px]">{{ $pm->account_number }}</span>
-                        <button type="button" onclick="navigator.clipboard.writeText('{{ $pm->account_number }}'); notifyCopied('¡Número de {{ $pm->name }} copiado al portapapeles!')" class="text-emerald-400 text-xs font-bold hover:text-emerald-300 cursor-pointer ml-1">📋 Copiar</button>
+                    <!-- Código QR Centrado -->
+                    <div onclick="showQrModal('QR {{ $pm->name }}', '{{ $pm->qr_image ? asset('storage/' . $pm->qr_image) : '' }}', '{{ $pm->account_holder ?? $pm->name }}')" class="bg-white p-3 rounded-2xl inline-block shadow-lg cursor-pointer hover:scale-105 transition-transform my-2 border border-slate-700">
+                        @if($pm->qr_image)
+                            <img src="{{ asset('storage/' . $pm->qr_image) }}" alt="QR {{ $pm->name }}" class="w-28 h-28 object-contain">
+                        @else
+                            <div class="w-28 h-28 flex flex-col items-center justify-center text-slate-800">
+                                <span class="text-3xl mb-1">📱</span>
+                                <span class="text-[10px] font-bold">QR Oficial</span>
+                            </div>
+                        @endif
                     </div>
 
                     @if($pm->account_holder)
-                        <p class="text-[10px] text-slate-500 mt-1.5 truncate">Titular: <strong class="text-slate-300">{{ $pm->account_holder }}</strong></p>
+                        <div class="mt-2 text-center">
+                            <span class="text-[10px] text-slate-400 block">Titular de la cuenta:</span>
+                            <p class="text-xs sm:text-sm font-bold text-white mt-0.5">{{ $pm->account_holder }}</p>
+                        </div>
                     @endif
                 </div>
 
-                <!-- Botón para ver y escanear QR -->
-                <button type="button" onclick="showQrModal('QR {{ $pm->name }}', '{{ $pm->qr_image ? asset('storage/' . $pm->qr_image) : '' }}', '{{ $pm->account_number }}', '{{ $pm->account_holder ?? $pm->name }}', '{{ $pm->color_theme }}')" class="mt-4 w-full py-2.5 {{ $colorTheme['btn'] }} border font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                <!-- Botón para ver y escanear QR grande -->
+                <button type="button" onclick="showQrModal('QR {{ $pm->name }}', '{{ $pm->qr_image ? asset('storage/' . $pm->qr_image) : '' }}', '{{ $pm->account_holder ?? $pm->name }}')" class="mt-4 w-full py-2.5 {{ $colorTheme['btn'] }} border font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
                     <span>📸</span> Escanear Código QR
                 </button>
             </div>
@@ -89,7 +97,7 @@
                 <label class="block font-semibold text-slate-300 mb-1">Método de Pago Utilizado</label>
                 <select name="payment_method" required class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-white focus:outline-none focus:border-emerald-500">
                     @foreach($paymentMethods as $pm)
-                        <option value="{{ $pm->name }}">{{ $pm->name }} ({{ $pm->account_number }})</option>
+                        <option value="{{ $pm->name }}">{{ $pm->name }} @if($pm->account_holder) (Titular: {{ $pm->account_holder }}) @endif</option>
                     @endforeach
                 </select>
             </div>
@@ -168,24 +176,19 @@
         </button>
 
         <h3 id="qrModalTitle" class="text-lg font-black text-white mb-1">Código QR Oficial</h3>
-        <p class="text-xs text-slate-400 mb-4">Abre tu app bancaria y escanea este código para transferir directamente</p>
+        <p class="text-xs text-slate-400 mb-4">Abre tu app bancaria y escanea este código para transferir</p>
 
         <!-- Contenedor del QR -->
         <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4 border border-slate-200">
-            <div id="qrImageContainer" class="w-56 h-56 flex items-center justify-center">
+            <div id="qrImageContainer" class="w-60 h-60 flex items-center justify-center">
                 <!-- Se inyecta dinámicamente -->
             </div>
         </div>
 
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs mb-4">
-            <div class="flex justify-between items-center text-slate-400 mb-1">
-                <span>Número / Cuenta:</span>
-                <span id="qrModalNumber" class="font-mono font-bold text-white text-sm"></span>
-            </div>
-            <div class="flex justify-between items-center text-slate-400">
-                <span>Titular:</span>
-                <span id="qrModalHolder" class="font-semibold text-emerald-400"></span>
-            </div>
+        <!-- Solo el Titular / Nombre (sin número por seguridad) -->
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-xs mb-4 text-center">
+            <span class="text-[11px] text-slate-400 block mb-0.5">Titular de la cuenta:</span>
+            <span id="qrModalHolder" class="font-bold text-emerald-400 text-sm sm:text-base"></span>
         </div>
 
         <button type="button" onclick="closeQrModal()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition cursor-pointer">
@@ -195,18 +198,15 @@
 </div>
 
 <script>
-    function showQrModal(title, qrUrl, number, holder, color) {
+    function showQrModal(title, qrUrl, holder) {
         document.getElementById('qrModalTitle').innerText = title;
-        document.getElementById('qrModalNumber').innerText = number;
         document.getElementById('qrModalHolder').innerText = holder;
 
         const container = document.getElementById('qrImageContainer');
         if (qrUrl && qrUrl.trim() !== '') {
             container.innerHTML = `<img src="${qrUrl}" alt="${title}" class="w-full h-full object-contain">`;
         } else {
-            // QR Generator Fallback con QR Server API
-            const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(number)}`;
-            container.innerHTML = `<img src="${qrApi}" alt="${title}" class="w-full h-full object-contain">`;
+            container.innerHTML = `<div class="text-center p-4 text-slate-700 font-bold text-xs"><span class="text-4xl block mb-2">📸</span>Escanea el QR oficial desde tu app</div>`;
         }
 
         document.getElementById('qrModal').classList.remove('hidden');

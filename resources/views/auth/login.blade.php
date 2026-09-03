@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - PYRAMID VIP</title>
+    <title>Acceso - NVIDIA.VIP</title>
+    <link rel="icon" type="image/jpeg" href="{{ asset('img/Nvidia.jpg') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,9 +25,9 @@
             <a href="/" class="text-xs text-slate-400 hover:text-emerald-400 flex items-center gap-1 transition">
                 ← Volver al Inicio
             </a>
-            <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white text-base font-bold shadow-md">
-                💎
-            </span>
+            <div class="w-8 h-8 rounded-xl bg-black border border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-md">
+                <img src="{{ asset('img/Nvidia.jpg') }}" alt="Logo" class="w-full h-full object-cover">
+            </div>
         </div>
 
         <!-- Pestañas de Cambio Rápido entre Login y Registro sin salir de la página -->

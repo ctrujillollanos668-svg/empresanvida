@@ -49,29 +49,31 @@
                         <div class="mt-4">
                             <div class="flex justify-between text-xs text-slate-400 mb-1">
                                 <span>Progreso del Tope:</span>
-                                <span class="font-bold text-slate-200 font-mono">${{ number_format($up->earned_so_far, 0, ',', '.') }} / ${{ number_format($up->max_earning, 0, ',', '.') }} COP</span>
+                                <span class="font-bold text-slate-200 font-mono" id="plan-progress-text-{{ $up->id }}">${{ number_format($up->earned_so_far, 0, ',', '.') }} / ${{ number_format($up->max_earning, 0, ',', '.') }} COP</span>
                             </div>
                             <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
                                 @php
                                     $percent = $up->max_earning > 0 ? min(100, round(($up->earned_so_far / $up->max_earning) * 100)) : 0;
                                 @endphp
-                                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" style="width: {{ $percent }}%"></div>
+                                <div id="plan-progress-bar-{{ $up->id }}" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" style="width: {{ $percent }}%"></div>
                             </div>
                         </div>
 
-                        @if(!$up->canClaim())
-                            <div class="w-full mt-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-between px-4 text-xs">
-                                <span class="text-slate-400">⏳ Próximo reclamo:</span>
-                                <span class="countdown-timer font-mono text-amber-400 font-extrabold" data-seconds="{{ $up->secondsUntilNextClaim() }}">Calculando...</span>
-                            </div>
-                        @else
-                            <form method="POST" action="{{ route('cliente.plans.claim', $up->id) }}">
-                                @csrf
-                                <button type="submit" class="w-full mt-4 py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-600 hover:to-teal-600 text-slate-950 text-xs font-black rounded-2xl shadow-lg shadow-emerald-500/25 transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer animate-pulse">
-                                    <span>🎁</span> Reclamar Ganancia de Hoy (+${{ number_format($up->daily_earning, 0, ',', '.') }} COP)
-                                </button>
-                            </form>
-                        @endif
+                        <div id="plan-action-container-{{ $up->id }}">
+                            @if(!$up->canClaim())
+                                <div class="w-full mt-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-between px-4 text-xs">
+                                    <span class="text-slate-400">⏳ Próximo reclamo:</span>
+                                    <span class="countdown-timer font-mono text-amber-400 font-extrabold" data-seconds="{{ $up->secondsUntilNextClaim() }}">Calculando...</span>
+                                </div>
+                            @else
+                                <form method="POST" action="{{ route('cliente.plans.claim', $up->id) }}" onsubmit="handleClaimDaily(event, {{ $up->id }}, '{{ route('cliente.plans.claim', $up->id) }}')">
+                                    @csrf
+                                    <button type="submit" id="btn-claim-{{ $up->id }}" class="w-full mt-4 py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-600 hover:to-teal-600 text-slate-950 text-xs font-black rounded-2xl shadow-lg shadow-emerald-500/25 transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer animate-pulse">
+                                        <span>🎁</span> Reclamar Ganancia de Hoy (+${{ number_format($up->daily_earning, 0, ',', '.') }} COP)
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
                 @endforeach
             </div>
@@ -137,9 +139,92 @@
 </div>
 
 <script>
+    async function handleClaimDaily(event, planId, url) {
+        event.preventDefault();
+        const btn = document.getElementById(`btn-claim-${planId}`);
+        if (!btn || btn.disabled) return;
+
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span>⏳ Acreditando saldo...</span>';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({})
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                btn.innerHTML = originalText;
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: data.message || 'No se pudo procesar el reclamo.',
+                    customClass: { popup: 'swal-custom-dark' },
+                    confirmButtonColor: '#f59e0b'
+                });
+                return;
+            }
+
+            // 1. Actualizar balance en el encabezado
+            document.querySelectorAll('.user-balance-value').forEach(el => {
+                el.innerText = `$${data.new_balance_formatted}`;
+            });
+
+            // 2. Actualizar progreso
+            const progressText = document.getElementById(`plan-progress-text-${planId}`);
+            if (progressText) {
+                progressText.innerText = `$${data.earned_so_far_formatted} / $${data.max_earning_formatted} COP`;
+            }
+            const progressBar = document.getElementById(`plan-progress-bar-${planId}`);
+            if (progressBar) {
+                progressBar.style.width = `${data.percent}%`;
+            }
+
+            // 3. Reemplazar botón por temporizador sin alerta
+            const container = document.getElementById(`plan-action-container-${planId}`);
+            if (container) {
+                if (data.status === 'completed') {
+                    container.innerHTML = `
+                        <div class="w-full mt-4 py-3 bg-slate-950 border border-emerald-500/30 rounded-2xl flex items-center justify-between px-4 text-xs">
+                            <span class="text-emerald-400 font-bold">✅ Paquete Completado</span>
+                            <span class="font-mono text-emerald-400 text-[10px]">100% Retorno</span>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="w-full mt-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-between px-4 text-xs">
+                            <span class="text-slate-400">⏳ Próximo reclamo:</span>
+                            <span class="countdown-timer font-mono text-amber-400 font-extrabold" data-seconds="${data.next_seconds}">Calculando...</span>
+                        </div>
+                    `;
+                    startCountdownTimers();
+                }
+            }
+
+        } catch (err) {
+            console.error('Error al reclamar:', err);
+            const form = btn.closest('form');
+            if (form) form.submit();
+        }
+    }
+
     function startCountdownTimers() {
         const timers = document.querySelectorAll('.countdown-timer');
         timers.forEach(timer => {
+            if (timer.dataset.timerRunning === 'true') return;
+            timer.dataset.timerRunning = 'true';
+
             let seconds = parseInt(timer.getAttribute('data-seconds'), 10);
             if (isNaN(seconds) || seconds <= 0) {
                 timer.innerText = "¡Listo para reclamar!";

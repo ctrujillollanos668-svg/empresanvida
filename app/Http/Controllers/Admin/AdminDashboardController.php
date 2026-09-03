@@ -37,4 +37,44 @@ class AdminDashboardController extends Controller
             'recentUsers'
         ));
     }
+
+    /**
+     * Endpoint liviano para consultar en segundo plano nuevas recargas o retiros pendientes (Compatible con cualquier Hosting)
+     */
+    public function checkNotifications()
+    {
+        $pendingDeposits = Deposit::where('status', 'pending')->count();
+        $pendingWithdrawals = Withdrawal::where('status', 'pending')->count();
+
+        $latestDeposit = Deposit::with('user')
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        $latestWithdrawal = Withdrawal::with('user')
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        return response()->json([
+            'pending_deposits' => $pendingDeposits,
+            'pending_withdrawals' => $pendingWithdrawals,
+            'latest_deposit' => $latestDeposit ? [
+                'id' => $latestDeposit->id,
+                'user_name' => $latestDeposit->user ? $latestDeposit->user->name : 'Cliente',
+                'amount' => $latestDeposit->amount,
+                'amount_formatted' => number_format($latestDeposit->amount, 0, ',', '.'),
+                'payment_method' => $latestDeposit->payment_method,
+                'created_at' => $latestDeposit->created_at ? $latestDeposit->created_at->diffForHumans() : 'Hace un momento',
+            ] : null,
+            'latest_withdrawal' => $latestWithdrawal ? [
+                'id' => $latestWithdrawal->id,
+                'user_name' => $latestWithdrawal->user ? $latestWithdrawal->user->name : 'Cliente',
+                'amount' => $latestWithdrawal->amount,
+                'amount_formatted' => number_format($latestWithdrawal->amount, 0, ',', '.'),
+                'payment_method' => $latestWithdrawal->payment_method,
+                'created_at' => $latestWithdrawal->created_at ? $latestWithdrawal->created_at->diffForHumans() : 'Hace un momento',
+            ] : null,
+        ]);
+    }
 }

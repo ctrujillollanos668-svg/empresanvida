@@ -20,11 +20,11 @@ class AdminPaymentMethodController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'type' => 'required|string|max:50',
-            'account_number' => 'required|string|max:255',
+            'account_number' => 'nullable|string|max:255',
             'account_holder' => 'nullable|string|max:100',
             'account_type' => 'nullable|string|max:50',
             'color_theme' => 'required|string|max:30',
-            'qr_image' => 'nullable|image|max:4096',
+            'qr_image' => 'nullable|image|max:8192',
         ]);
 
         $qrPath = null;
@@ -55,11 +55,11 @@ class AdminPaymentMethodController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'type' => 'required|string|max:50',
-            'account_number' => 'required|string|max:255',
+            'account_number' => 'nullable|string|max:255',
             'account_holder' => 'nullable|string|max:100',
             'account_type' => 'nullable|string|max:50',
             'color_theme' => 'required|string|max:30',
-            'qr_image' => 'nullable|image|max:4096',
+            'qr_image' => 'nullable|image|max:8192',
         ]);
 
         $data = [
