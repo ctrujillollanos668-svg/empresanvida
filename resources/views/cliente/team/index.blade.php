@@ -34,7 +34,7 @@
         <!-- Botones de Redes Sociales -->
         <div class="grid grid-cols-2 gap-3 mt-4">
             @php
-                $shareText = urlencode("¡Únete a mi equipo en NVIDA VIP y gana rendimientos diarios en pesos colombianos! Regístrate aquí: " . url('/register?ref=' . $user->referral_code));
+                $shareText = urlencode("¡Únete a mi equipo en FORTEX y gana rendimientos diarios en pesos colombianos! Regístrate aquí: " . url('/register?ref=' . $user->referral_code));
             @endphp
             <a href="https://api.whatsapp.com/send?text={{ $shareText }}" target="_blank" class="py-2.5 px-3 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-bold text-center transition flex items-center justify-center gap-2">
                 <span>💬</span> WhatsApp

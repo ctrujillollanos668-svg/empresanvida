@@ -9,10 +9,10 @@
     <div class="flex items-center justify-between py-1 px-1">
         <div class="flex items-center gap-2.5">
             <div class="w-10 h-10 rounded-2xl bg-black border border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-lg shadow-emerald-500/25">
-                <img src="{{ asset('img/nvida.jpg') }}" alt="Logo" class="w-full h-full object-cover">
+                <img src="{{ asset('img/fortex.jpg') }}" alt="FORTEX" class="w-full h-full object-cover">
             </div>
             <div>
-                <h1 class="text-base font-black text-white tracking-tight leading-none">NVIDA<span class="text-emerald-400">.VIP</span></h1>
+                <h1 class="text-base font-black text-white tracking-tight leading-none">FORTEX</h1>
                 <span class="text-[9px] text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1 mt-0.5">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Servidores Cloud Verificados
                 </span>
@@ -72,7 +72,7 @@
         </div>
         <div class="overflow-hidden whitespace-nowrap text-xs text-slate-300 flex-1">
             <div class="animate-marquee inline-block">
-                <span>¡Bienvenidos a la plataforma oficial NVIDA.VIP! • Servidores de procesamiento y rendimientos en COP • Retiros a Nequi y Daviplata en menos de 15 minutos • Gana 10% directo por cada amigo invitado •</span>
+                <span>¡Bienvenidos a la plataforma oficial FORTEX! • Servidores de procesamiento y rendimientos en COP • Retiros a Nequi y Daviplata en menos de 15 minutos • Gana 10% directo por cada amigo invitado •</span>
             </div>
         </div>
     </div>
@@ -330,7 +330,7 @@
         <div class="flex flex-col items-center text-center mb-4">
             <div class="relative mb-2">
                 <div class="w-16 h-16 rounded-2xl bg-black border-2 border-emerald-500/50 p-1 flex items-center justify-center shadow-xl shadow-emerald-500/20">
-                    <img src="{{ asset('img/nvida.jpg') }}" alt="NVIDA Logo" class="w-full h-full object-cover rounded-xl">
+                    <img src="{{ asset('img/fortex.jpg') }}" alt="FORTEX Logo" class="w-full h-full object-cover rounded-xl">
                 </div>
                 <span class="absolute -bottom-1 -right-1 bg-emerald-500 text-slate-950 text-[11px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-slate-900 shadow">
                     ✓
@@ -340,8 +340,8 @@
             <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-black tracking-widest uppercase mb-1">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> INFRAESTRUCTURA CLOUD VERIFICADA
             </span>
-            <h3 class="text-base sm:text-lg font-black text-white">NVIDA Technologies</h3>
-            <p class="text-[11px] text-slate-400">Red Internacional de Servidores Cloud y Cómputo</p>
+            <h3 class="text-base sm:text-lg font-black text-white">FORTEX</h3>
+            <p class="text-[11px] text-slate-400">Plataforma Oficial de Inversión y Cómputo Cloud</p>
         </div>
 
         <!-- Recuadro del Certificado Oficial -->
@@ -350,7 +350,7 @@
             <div class="grid grid-cols-2 gap-2 pb-3 border-b border-slate-800/80 text-[11px]">
                 <div>
                     <span class="text-slate-500 text-[10px] block font-semibold">Licencia Operativa:</span>
-                    <span class="font-mono font-bold text-emerald-400">NVD-2026-CLOUD</span>
+                    <span class="font-mono font-bold text-emerald-400">FTX-2026-CLOUD</span>
                 </div>
                 <div>
                     <span class="text-slate-500 text-[10px] block font-semibold">Seguridad de Red:</span>
@@ -379,7 +379,7 @@
                 <div class="flex items-start gap-2.5">
                     <span class="text-base leading-none">🖥️</span>
                     <div>
-                        <strong class="text-white">Infraestructura de Servidores NVIDA Cloud:</strong>
+                        <strong class="text-white">Infraestructura de Servidores FORTEX:</strong>
                         <p class="text-slate-400 text-[10px] leading-relaxed mt-0.5">Tu inversión participa en la capacidad operativa de centros de datos y computación gráfica de alto rendimiento con 99.98% de disponibilidad.</p>
                     </div>
                 </div>
@@ -395,7 +395,7 @@
 
             <!-- Sello Digital de Autenticidad -->
             <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                <span>Licencia de Red: #NVD-7729-CO</span>
+                <span>Licencia de Red: #FTX-8840-CO</span>
                 <span class="text-emerald-400 font-bold flex items-center gap-1">
                     <span>🔒</span> Servidor Verificado y En Línea
                 </span>
@@ -522,7 +522,7 @@
                     Canjear
                 </button>
             </div>
-            <span class="text-[9px] text-slate-500 mt-1 block">Prueba con los códigos: <b class="text-slate-400">VIP2026</b>, <b class="text-slate-400">BONO777</b> o <b class="text-slate-400">NVIDA</b></span>
+            <span class="text-[9px] text-slate-500 mt-1 block">Prueba con los códigos: <b class="text-slate-400">VIP2026</b>, <b class="text-slate-400">BONO777</b> o <b class="text-slate-400">FORTEX</b></span>
         </div>
     </div>
 </div>

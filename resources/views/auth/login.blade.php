@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - NVIDA.VIP</title>
-    <link rel="icon" type="image/jpeg" href="{{ asset('img/nvida.jpg') }}">
+    <title>Acceso - FORTEX</title>
+    <link rel="icon" type="image/jpeg" href="{{ asset('img/fortex.jpg') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
                 ← Volver al Inicio
             </a>
             <div class="w-8 h-8 rounded-xl bg-black border border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-md">
-                <img src="{{ asset('img/nvida.jpg') }}" alt="Logo" class="w-full h-full object-cover">
+                <img src="{{ asset('img/fortex.jpg') }}" alt="FORTEX" class="w-full h-full object-cover">
             </div>
         </div>
 
