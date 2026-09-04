@@ -634,11 +634,13 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 }
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => ({ success: false, message: 'Respuesta inválida del servidor.' }));
 
             if (!response.ok || !data.success) {
                 isSpinning = false;
@@ -648,8 +650,8 @@
                 
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Ruleta Diaria',
-                    text: data.message,
+                    title: 'Ruleta VIP',
+                    text: data.message || 'No fue posible procesar el giro.',
                     customClass: { popup: 'swal-custom-dark' },
                     confirmButtonColor: '#f59e0b'
                 });
@@ -690,6 +692,13 @@
             spinBtn.disabled = false;
             spinBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             statusMsg.innerText = 'Ocurrió un error. Intenta nuevamente.';
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un inconveniente al comunicarse con el servidor.',
+                customClass: { popup: 'swal-custom-dark' },
+                confirmButtonColor: '#ef4444'
+            });
         }
     }
 
@@ -702,12 +711,14 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({})
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => ({ success: false, message: 'Respuesta inválida del servidor.' }));
 
             if (!response.ok || !data.success) {
                 Swal.fire({
@@ -734,7 +745,13 @@
             });
 
         } catch (err) {
-            alert('Ocurrió un error al procesar el sobre rojo.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al procesar el sobre rojo.',
+                customClass: { popup: 'swal-custom-dark' },
+                confirmButtonColor: '#ef4444'
+            });
         }
     }
 
@@ -758,12 +775,14 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({ code: code })
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => ({ success: false, message: 'Respuesta inválida del servidor.' }));
 
             if (!response.ok || !data.success) {
                 Swal.fire({

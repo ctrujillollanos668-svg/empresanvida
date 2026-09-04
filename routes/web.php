@@ -43,8 +43,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/my-team', [ClientTeamController::class, 'index'])->name('cliente.team.index');
 
     // Dinámicas Interactivas (Ruleta de la Suerte & Sobre Rojo)
-    Route::post('/rewards/roulette', [\App\Http\Controllers\Cliente\RewardController::class, 'spin'])->name('cliente.rewards.spin');
-    Route::post('/rewards/red-packet', [\App\Http\Controllers\Cliente\RewardController::class, 'claimRedPacket'])->name('cliente.rewards.red-packet');
+    Route::match(['get', 'post'], '/rewards/roulette', [\App\Http\Controllers\Cliente\RewardController::class, 'spin'])->name('cliente.rewards.spin');
+    Route::match(['get', 'post'], '/rewards/red-packet', [\App\Http\Controllers\Cliente\RewardController::class, 'claimRedPacket'])->name('cliente.rewards.red-packet');
 
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
