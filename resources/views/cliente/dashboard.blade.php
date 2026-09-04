@@ -276,26 +276,11 @@
                         </div>
                     </div>
 
-                    <form id="buy-plan-app-{{ $plan->id }}" method="POST" action="{{ route('cliente.plans.buy', $plan->id) }}" class="mt-2">
-                        @csrf
-                        <button type="button" onclick="Swal.fire({
-                            title: '¿Activar {{ $plan->name }}?',
-                            html: 'Se descontarán <b class=\'text-emerald-400\'>${{ number_format($plan->price, 0, ',', '.') }} COP</b> de tu saldo disponible.<br><br><div class=\'bg-slate-950 p-3 rounded-xl border border-slate-800 text-left text-xs space-y-1 text-slate-300\'><div>⚡ Rendimiento: <b class=\'text-emerald-400\'>{{ $plan->daily_percentage }}% diario</b></div><div>📅 Duración: <b>{{ $plan->duration_days }} días</b></div><div>💰 Retorno Total: <b class=\'text-amber-400\'>${{ number_format($plan->max_return, 0, ',', '.') }} COP</b></div></div>',
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonColor: '#10b981',
-                            cancelButtonColor: '#334155',
-                            confirmButtonText: '⚡ Sí, Activar Ahora',
-                            cancelButtonText: 'Cancelar',
-                            customClass: { popup: 'swal-custom-dark' }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                document.getElementById('buy-plan-app-{{ $plan->id }}').submit();
-                            }
-                        })" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black rounded-xl text-xs shadow-md transition active:scale-95 cursor-pointer">
+                    <div class="mt-2">
+                        <button type="button" onclick="openBuyModalDashboard({{ $plan->id }}, '{{ addslashes($plan->name) }}', {{ $plan->price }}, '{{ number_format($plan->price, 0, ',', '.') }}')" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black rounded-xl text-xs shadow-md transition active:scale-95 cursor-pointer">
                             ⚡ Activar {{ $plan->name }}
                         </button>
-                    </form>
+                    </div>
                 </div>
             @endforeach
         </div>
@@ -306,6 +291,70 @@
 <!-- ========================================== -->
 <!-- MODALES INTERACTIVOS (SOPORTE, RULETA, SOBRE ROJO, LEGALIDAD) -->
 <!-- ========================================== -->
+
+<!-- Modal Selección de Saldo para Comprar Plan (Dashboard) -->
+<div id="chooseWalletModalDashboard" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative text-xs space-y-4">
+        <div class="flex items-start justify-between">
+            <div>
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-extrabold uppercase">Activar Membresía</span>
+                <h3 id="dashModalPlanName" class="text-lg font-black text-white mt-1">Nombre del Plan</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Costo: <strong id="dashModalPlanPrice" class="text-emerald-400 font-mono text-sm">$0 COP</strong></p>
+            </div>
+            <button type="button" onclick="closeChooseWalletModalDashboard()" class="text-slate-400 hover:text-white text-base font-bold transition cursor-pointer">✕</button>
+        </div>
+
+        <p class="text-slate-300 text-xs font-semibold">
+            ¿Con qué saldo deseas activar este plan? Elige una opción:
+        </p>
+
+        <form id="dashConfirmBuyForm" method="POST" action="">
+            @csrf
+            <input type="hidden" name="payment_source" id="dashSelectedPaymentSource" value="">
+
+            <div class="space-y-2.5">
+                <!-- Opción 1: Saldo de Recargas -->
+                <div id="dashCardWalletDeposit" onclick="selectWalletDashboard('deposit')" class="p-3.5 bg-slate-950 border-2 border-slate-800 rounded-2xl cursor-pointer transition flex items-center justify-between hover:border-slate-700">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">
+                            💳
+                        </div>
+                        <div>
+                            <h4 class="font-black text-white text-xs">Saldo de Recargas</h4>
+                            <span class="text-[11px] text-slate-400 font-mono block">Disponible: ${{ number_format($rechargeBalance, 0, ',', '.') }} COP</span>
+                        </div>
+                    </div>
+                    <div id="dashBadgeWalletDeposit"></div>
+                </div>
+
+                <!-- Opción 2: Saldo de Ganancias -->
+                <div id="dashCardWalletEarnings" onclick="selectWalletDashboard('earnings')" class="p-3.5 bg-slate-950 border-2 border-slate-800 rounded-2xl cursor-pointer transition flex items-center justify-between hover:border-slate-700">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
+                            💎
+                        </div>
+                        <div>
+                            <h4 class="font-black text-white text-xs">Saldo de Ganancias (Re-inversión)</h4>
+                            <span class="text-[11px] text-emerald-400 font-mono block">Disponible: ${{ number_format($earningsBalance, 0, ',', '.') }} COP</span>
+                        </div>
+                    </div>
+                    <div id="dashBadgeWalletEarnings"></div>
+                </div>
+            </div>
+
+            <div id="dashWalletErrorMsg" class="hidden mt-3 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-[11px]"></div>
+
+            <div class="pt-3 space-y-2">
+                <button type="submit" id="dashBtnConfirmBuy" disabled class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black rounded-2xl shadow-lg shadow-emerald-500/25 transition active:scale-95 text-xs sm:text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                    ⚡ Confirmar y Activar Plan
+                </button>
+                <button type="button" onclick="closeChooseWalletModalDashboard()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-2xl text-xs transition cursor-pointer">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- Modal Soporte / Centro de Ayuda -->
 <div id="supportModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
@@ -849,5 +898,96 @@
         });
     }
     document.addEventListener('DOMContentLoaded', startCountdownTimers);
+
+    // Lógica del Modal de Selección de Saldo en Dashboard (Recarga vs Ganancias)
+    const userDashRechargeBalance = {{ (float) $rechargeBalance }};
+    const userDashEarningsBalance = {{ (float) $earningsBalance }};
+    let currentDashPlanPrice = 0;
+
+    function openBuyModalDashboard(planId, planName, planPrice, planPriceFormatted) {
+        currentDashPlanPrice = parseFloat(planPrice);
+        document.getElementById('dashModalPlanName').innerText = planName;
+        document.getElementById('dashModalPlanPrice').innerText = '$' + planPriceFormatted + ' COP';
+        document.getElementById('dashConfirmBuyForm').action = "{{ url('/plans') }}/" + planId + "/buy";
+        document.getElementById('dashSelectedPaymentSource').value = '';
+        document.getElementById('dashBtnConfirmBuy').disabled = true;
+        document.getElementById('dashWalletErrorMsg').classList.add('hidden');
+
+        // Evaluar disponibilidad de Saldo de Recargas
+        const canDeposit = userDashRechargeBalance >= currentDashPlanPrice;
+        const badgeDep = document.getElementById('dashBadgeWalletDeposit');
+        badgeDep.innerHTML = canDeposit 
+            ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-extrabold">✅ Disponible</span>'
+            : '<span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-extrabold">❌ Insuficiente</span>';
+
+        // Evaluar disponibilidad de Saldo de Ganancias
+        const canEarnings = userDashEarningsBalance >= currentDashPlanPrice;
+        const badgeEarn = document.getElementById('dashBadgeWalletEarnings');
+        badgeEarn.innerHTML = canEarnings 
+            ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-extrabold">✅ Disponible</span>'
+            : '<span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-extrabold">❌ Insuficiente</span>';
+
+        resetWalletCardsDashboard();
+
+        // Auto-seleccionar la opción que tenga fondos disponibles
+        if (canDeposit) {
+            selectWalletDashboard('deposit');
+        } else if (canEarnings) {
+            selectWalletDashboard('earnings');
+        } else {
+            document.getElementById('dashWalletErrorMsg').innerText = '⚠️ No tienes saldo suficiente en ninguna de las dos fuentes para este plan ($' + planPriceFormatted + ' COP). Por favor recarga saldo primero.';
+            document.getElementById('dashWalletErrorMsg').classList.remove('hidden');
+        }
+
+        document.getElementById('chooseWalletModalDashboard').classList.remove('hidden');
+    }
+
+    function closeChooseWalletModalDashboard() {
+        document.getElementById('chooseWalletModalDashboard').classList.add('hidden');
+    }
+
+    function resetWalletCardsDashboard() {
+        const cardDep = document.getElementById('dashCardWalletDeposit');
+        const cardEarn = document.getElementById('dashCardWalletEarnings');
+        if (cardDep) {
+            cardDep.className = 'p-3.5 bg-slate-950 border-2 border-slate-800 rounded-2xl cursor-pointer transition flex items-center justify-between hover:border-slate-700';
+        }
+        if (cardEarn) {
+            cardEarn.className = 'p-3.5 bg-slate-950 border-2 border-slate-800 rounded-2xl cursor-pointer transition flex items-center justify-between hover:border-slate-700';
+        }
+    }
+
+    function selectWalletDashboard(source) {
+        const canPay = source === 'deposit' ? (userDashRechargeBalance >= currentDashPlanPrice) : (userDashEarningsBalance >= currentDashPlanPrice);
+        const errorDiv = document.getElementById('dashWalletErrorMsg');
+
+        resetWalletCardsDashboard();
+
+        if (!canPay) {
+            const label = source === 'deposit' ? 'Saldo de Recargas' : 'Saldo de Ganancias';
+            errorDiv.innerText = `⚠️ Tu ${label} no alcanza para activar este plan ($${currentDashPlanPrice.toLocaleString('es-CO')} COP).`;
+            errorDiv.classList.remove('hidden');
+            document.getElementById('dashSelectedPaymentSource').value = '';
+            document.getElementById('dashBtnConfirmBuy').disabled = true;
+            return;
+        }
+
+        errorDiv.classList.add('hidden');
+        document.getElementById('dashSelectedPaymentSource').value = source;
+        document.getElementById('dashBtnConfirmBuy').disabled = false;
+
+        if (source === 'deposit') {
+            document.getElementById('dashCardWalletDeposit').className = 'p-3.5 bg-slate-950 border-2 border-emerald-500 shadow-lg shadow-emerald-500/10 rounded-2xl cursor-pointer transition flex items-center justify-between';
+        } else {
+            document.getElementById('dashCardWalletEarnings').className = 'p-3.5 bg-slate-950 border-2 border-emerald-500 shadow-lg shadow-emerald-500/10 rounded-2xl cursor-pointer transition flex items-center justify-between';
+        }
+    }
+
+    // Cerrar modal al hacer clic en el backdrop
+    document.getElementById('chooseWalletModalDashboard')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeChooseWalletModalDashboard();
+        }
+    });
 </script>
 @endsection

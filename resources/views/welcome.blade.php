@@ -494,27 +494,10 @@
                         </div>
 
                         @auth
-                            <!-- Botón de compra directa con modal para usuario autenticado -->
-                            <form id="buy-plan-welcome-{{ $plan->id }}" method="POST" action="{{ route('cliente.plans.buy', $plan->id) }}" class="mt-8">
-                                @csrf
-                                <button type="button" onclick="Swal.fire({
-                                    title: '¿Activar {{ $plan->name }}?',
-                                    html: 'Se descontarán <b class=\'text-emerald-400\'>${{ number_format($plan->price, 0, ',', '.') }} COP</b> de tu saldo disponible.<br><br><div class=\'bg-slate-950 p-3 rounded-xl border border-slate-800 text-left text-xs space-y-1 text-slate-300\'><div>⚡ Rendimiento: <b class=\'text-emerald-400\'>{{ $plan->daily_percentage }}% diario</b> (${{ number_format(($plan->price * $plan->daily_percentage) / 100, 0, ',', '.') }} COP)</div><div>📅 Duración: <b>{{ $plan->duration_days }} días</b></div><div>💰 Retorno Total: <b class=\'text-amber-400\'>${{ number_format($plan->max_return, 0, ',', '.') }} COP</b></div></div>',
-                                    icon: 'question',
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#10b981',
-                                    cancelButtonColor: '#334155',
-                                    confirmButtonText: '⚡ Sí, Activar Ahora',
-                                    cancelButtonText: 'Cancelar',
-                                    customClass: { popup: 'swal-custom-dark' }
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        document.getElementById('buy-plan-welcome-{{ $plan->id }}').submit();
-                                    }
-                                })" class="w-full py-4 {{ $plan->badge ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-lg shadow-emerald-500/25' : 'bg-slate-800 hover:bg-slate-700 text-white font-bold' }} text-xs rounded-xl text-center transition cursor-pointer active:scale-95">
-                                    ⚡ Activar {{ $plan->name }}
-                                </button>
-                            </form>
+                            <!-- Botón para usuario autenticado hacia la sección de activación con selección de saldo -->
+                            <a href="{{ route('cliente.plans.index') }}" class="mt-8 block w-full py-4 {{ $plan->badge ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-lg shadow-emerald-500/25' : 'bg-slate-800 hover:bg-slate-700 text-white font-bold' }} text-xs rounded-xl text-center transition cursor-pointer active:scale-95">
+                                ⚡ Activar {{ $plan->name }}
+                            </a>
                         @else
                             <button onclick="openAuthModal('register')" class="mt-8 w-full py-4 {{ $plan->badge ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25' : 'bg-slate-800 hover:bg-slate-700 text-white' }} font-extrabold text-xs rounded-xl text-center transition cursor-pointer">
                                 Activar {{ $plan->name }} ⚡

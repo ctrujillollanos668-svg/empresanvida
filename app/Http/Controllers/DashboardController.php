@@ -34,6 +34,8 @@ class DashboardController extends Controller
         $referralsCount = $user->referrals()->count();
         $totalCommissions = $user->commissionsReceived()->sum('amount');
         $recentTransactions = $user->transactions()->latest()->take(5)->get();
+        $rechargeBalance = $user->rechargeBalance();
+        $earningsBalance = $user->earningsBalance();
 
         return view('cliente.dashboard', compact(
             'user',
@@ -41,7 +43,9 @@ class DashboardController extends Controller
             'userPlans',
             'referralsCount',
             'totalCommissions',
-            'recentTransactions'
+            'recentTransactions',
+            'rechargeBalance',
+            'earningsBalance'
         ));
     }
 }
