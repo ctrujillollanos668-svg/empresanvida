@@ -703,6 +703,9 @@
 
             @if ($errors->any())
                 <div class="mb-4 p-3.5 bg-rose-500/15 border border-rose-500/30 rounded-2xl text-rose-300 text-xs">
+                    <div class="flex items-center gap-2 font-bold mb-1.5 text-rose-400">
+                        <span>⚠️</span> Atención:
+                    </div>
                     <ul class="list-disc list-inside space-y-0.5">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -717,7 +720,7 @@
                     @csrf
                     <div>
                         <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Correo Electrónico</label>
-                        <input id="modal_login_email" type="email" name="email" required placeholder="usuario@ejemplo.com" class="w-full px-4 py-3 bg-slate-950/70 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                        <input id="modal_login_email" type="email" name="email" value="{{ old('email') }}" required placeholder="usuario@ejemplo.com" class="w-full px-4 py-3 bg-slate-950/70 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
                     </div>
 
                     <div>
@@ -859,6 +862,12 @@
                 customClass: { popup: 'swal-custom-dark' },
                 confirmButtonColor: '#f43f5e',
                 confirmButtonText: 'Entendido'
+            });
+        @endif
+
+        @if ($errors->any())
+            document.addEventListener('DOMContentLoaded', function() {
+                openAuthModal('{{ old("name") || old("phone") || old("referred_by") ? "register" : "login" }}');
             });
         @endif
 

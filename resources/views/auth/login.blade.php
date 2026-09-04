@@ -42,6 +42,9 @@
 
         @if ($errors->any())
             <div class="mb-4 p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs">
+                <div class="flex items-center gap-2 font-bold mb-1.5 text-rose-300">
+                    <span>⚠️</span> Atención:
+                </div>
                 <ul class="list-disc list-inside space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
