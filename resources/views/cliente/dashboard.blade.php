@@ -605,8 +605,15 @@
     function openAboutModal() { document.getElementById('aboutModal').classList.remove('hidden'); }
     function closeAboutModal() { document.getElementById('aboutModal').classList.add('hidden'); }
 
+    let hasSpunInSession = false;
+
     function openRouletteModal() { document.getElementById('rouletteModal').classList.remove('hidden'); }
-    function closeRouletteModal() { document.getElementById('rouletteModal').classList.add('hidden'); }
+    function closeRouletteModal() { 
+        document.getElementById('rouletteModal').classList.add('hidden'); 
+        if (hasSpunInSession) {
+            window.location.reload();
+        }
+    }
 
     function openRedPacketModal() { document.getElementById('redPacketModal').classList.remove('hidden'); }
     function closeRedPacketModal() { document.getElementById('redPacketModal').classList.add('hidden'); }
@@ -671,19 +678,43 @@
 
             setTimeout(() => {
                 isSpinning = false;
-                spinBtn.disabled = false;
-                spinBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                statusMsg.innerText = `🎉 ¡Ganaste ${data.prize_label}!`;
+                hasSpunInSession = true;
 
+                // Actualizar contadores de giros disponibles en vivo dentro del modal
+                const spinsRemaining = data.spins_left ?? 0;
+                const spinsBadge = document.getElementById('spinsLeftBadge');
+                const centerLabel = document.getElementById('spinCenterLabel');
+                if (spinsBadge) spinsBadge.innerText = spinsRemaining;
+                if (centerLabel) centerLabel.innerText = spinsRemaining > 0 ? `${spinsRemaining}x` : '0x';
+
+                // Actualizar saldo del usuario en tiempo real en la interfaz
+                document.querySelectorAll('.user-balance-display').forEach(el => {
+                    el.innerText = data.new_balance_formatted;
+                });
+
+                // Estado del botón central de la ruleta según los giros que le queden
+                if (spinsRemaining > 0) {
+                    spinBtn.disabled = false;
+                    spinBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    statusMsg.innerText = `🎉 ¡Ganaste ${data.prize_label}! Te quedan ${spinsRemaining} giro${spinsRemaining > 1 ? 's' : ''}. ¡Presiona GIRAR para continuar!`;
+                } else {
+                    spinBtn.disabled = true;
+                    spinBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    statusMsg.innerText = `🎉 ¡Ganaste ${data.prize_label}! Ya no te quedan más giros. ¡Invita amigos para ganar más!`;
+                }
+
+                // Alerta de felicitación que NO cierra la ruleta
                 Swal.fire({
                     icon: 'success',
                     title: '¡Felicidades!',
-                    html: `Has ganado <b class="text-amber-400 text-lg font-mono">+${data.prize_label}</b><br><br>El dinero ya fue acreditado a tu balance disponible.`,
+                    html: `Has ganado <b class="text-amber-400 text-lg font-mono">+${data.prize_label}</b><br><br>` +
+                          `El dinero ya fue acreditado a tu balance disponible.<br>` +
+                          (spinsRemaining > 0 
+                            ? `<span class="text-emerald-400 font-bold block mt-2 text-xs">🎟️ ¡Aún tienes ${spinsRemaining} oportunidad${spinsRemaining > 1 ? 'es' : ''} más!</span>` 
+                            : `<span class="text-slate-400 text-[11px] block mt-2">¡Recarga o invita amigos con tu link para conseguir más giros!</span>`),
                     customClass: { popup: 'swal-custom-dark' },
                     confirmButtonColor: '#10b981',
-                    confirmButtonText: '¡Excelente!'
-                }).then(() => {
-                    window.location.reload();
+                    confirmButtonText: spinsRemaining > 0 ? '⚡ Seguir Girando' : '¡Aceptar!'
                 });
             }, 4100);
 
