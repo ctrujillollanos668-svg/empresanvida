@@ -67,9 +67,21 @@
                         </div>
                     </div>
 
-                    <div class="text-xs text-slate-400 flex items-center justify-between mb-4">
-                        <span>Usuarios con este plan:</span>
-                        <strong class="text-white font-mono">{{ $plan->user_plans_count }} clientes</strong>
+                    <div class="space-y-1.5 mb-4 text-xs">
+                        <div class="text-slate-400 flex items-center justify-between">
+                            <span>Unidades a la venta (Stock):</span>
+                            @if($plan->hasStockLimit())
+                                <span class="font-mono font-bold px-2 py-0.5 rounded-lg {{ $plan->isSoldOut() ? 'bg-rose-500/20 text-rose-400' : 'bg-cyan-500/20 text-cyan-400' }}">
+                                    {{ $plan->stock }} {{ $plan->stock == 1 ? 'unidad' : 'unidades' }} {{ $plan->isSoldOut() ? '(Agotado)' : '' }}
+                                </span>
+                            @else
+                                <span class="font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-lg">Ilimitado</span>
+                            @endif
+                        </div>
+                        <div class="text-slate-400 flex items-center justify-between">
+                            <span>Usuarios con este plan:</span>
+                            <strong class="text-white font-mono">{{ $plan->user_plans_count }} clientes</strong>
+                        </div>
                     </div>
                 </div>
 
@@ -154,9 +166,19 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block font-semibold text-slate-300 mb-1">Insignia / Badge (Etiqueta opcional)</label>
-                <input type="text" name="badge" placeholder="Ej: 🔥 Más Vendido, ⭐ Recomendado, 🚀 Nuevo" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-purple-500">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1 flex items-center justify-between">
+                        <span>Unidades a la Venta (Stock)</span>
+                        <span class="text-[10px] text-purple-400 font-normal">Opcional</span>
+                    </label>
+                    <input type="number" min="0" step="1" name="stock" placeholder="Ej: 20 (Vacío = Ilimitado)" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono focus:outline-none focus:border-purple-500">
+                    <span class="text-[10px] text-slate-500">¿Cuántos vas a vender? (Ej: 20)</span>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Insignia / Badge (Opcional)</label>
+                    <input type="text" name="badge" placeholder="Ej: 🔥 Más Vendido, ⭐ VIP" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-purple-500">
+                </div>
             </div>
 
             <div>
@@ -218,14 +240,24 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block font-semibold text-slate-300 mb-1">Insignia / Badge</label>
-                <input type="text" id="edit_badge" name="badge" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1 flex items-center justify-between">
+                        <span>Unidades a la Venta (Stock)</span>
+                        <span class="text-[10px] text-purple-400 font-normal">Opcional</span>
+                    </label>
+                    <input type="number" min="0" step="1" id="edit_stock" name="stock" placeholder="Vacío = Ilimitado" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono focus:outline-none focus:border-purple-500">
+                    <span class="text-[10px] text-slate-500">Modifica unidades restantes.</span>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Insignia / Badge</label>
+                    <input type="text" id="edit_badge" name="badge" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none">
+                </div>
             </div>
 
             <div>
                 <label class="block font-semibold text-slate-300 mb-1">Descripción</label>
-                <textarea id="edit_description" name="description" rows="2" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white"></textarea>
+                <textarea id="edit_description" name="description" rows="2" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none"></textarea>
             </div>
 
             <div class="flex items-center gap-2 pt-1">
@@ -273,6 +305,7 @@
         document.getElementById('edit_duration_days').value = plan.duration_days;
         document.getElementById('edit_max_return').value = plan.max_return;
         document.getElementById('edit_badge').value = plan.badge || '';
+        document.getElementById('edit_stock').value = (plan.stock !== null && plan.stock !== undefined) ? plan.stock : '';
         document.getElementById('edit_description').value = plan.description || '';
         document.getElementById('edit_status').checked = plan.status ? true : false;
         document.getElementById('editPlanModal').classList.remove('hidden');

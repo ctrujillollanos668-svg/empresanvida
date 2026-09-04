@@ -35,6 +35,7 @@ class AdminPlanController extends Controller
             'duration_days' => 'required|integer|min:1',
             'max_return' => 'required|numeric|min:1',
             'badge' => 'nullable|string|max:100',
+            'stock' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'El nombre del plan es obligatorio.',
             'price.required' => 'El precio en COP es obligatorio.',
@@ -43,6 +44,8 @@ class AdminPlanController extends Controller
             'daily_percentage.max' => 'El porcentaje diario no puede superar el 1000%.',
             'duration_days.required' => 'La duración en días es obligatoria.',
             'max_return.required' => 'El tope máximo de retorno es obligatorio.',
+            'stock.integer' => 'El límite de unidades debe ser un número entero.',
+            'stock.min' => 'El límite de unidades no puede ser menor a 0.',
         ]);
 
         Plan::create([
@@ -53,6 +56,7 @@ class AdminPlanController extends Controller
             'duration_days' => $request->duration_days,
             'max_return' => $request->max_return,
             'badge' => $request->badge,
+            'stock' => $request->filled('stock') ? (int) $request->stock : null,
             'status' => $request->has('status') ? true : true, // Activo por defecto para que aparezca de inmediato a admin y cliente
         ]);
 
@@ -81,6 +85,7 @@ class AdminPlanController extends Controller
             'duration_days' => 'required|integer|min:1',
             'max_return' => 'required|numeric|min:1',
             'badge' => 'nullable|string|max:100',
+            'stock' => 'nullable|integer|min:0',
         ], [
             'name.required' => 'El nombre del plan es obligatorio.',
             'price.required' => 'El precio en COP es obligatorio.',
@@ -89,6 +94,8 @@ class AdminPlanController extends Controller
             'daily_percentage.max' => 'El porcentaje diario no puede superar el 1000%.',
             'duration_days.required' => 'La duración en días es obligatoria.',
             'max_return.required' => 'El tope máximo de retorno es obligatorio.',
+            'stock.integer' => 'El límite de unidades debe ser un número entero.',
+            'stock.min' => 'El límite de unidades no puede ser menor a 0.',
         ]);
 
         $plan->update([
@@ -99,6 +106,7 @@ class AdminPlanController extends Controller
             'duration_days' => $request->duration_days,
             'max_return' => $request->max_return,
             'badge' => $request->badge,
+            'stock' => $request->filled('stock') ? (int) $request->stock : null,
             'status' => $request->has('status') ? true : false,
         ]);
 

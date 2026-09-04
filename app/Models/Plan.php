@@ -18,6 +18,7 @@ class Plan extends Model
         'duration_days',
         'max_return',
         'badge',
+        'stock',
         'status',
     ];
 
@@ -27,8 +28,19 @@ class Plan extends Model
             'price' => 'decimal:2',
             'daily_percentage' => 'decimal:2',
             'max_return' => 'decimal:2',
+            'stock' => 'integer',
             'status' => 'boolean',
         ];
+    }
+
+    public function hasStockLimit(): bool
+    {
+        return isset($this->attributes['stock']) && $this->attributes['stock'] !== null;
+    }
+
+    public function isSoldOut(): bool
+    {
+        return $this->hasStockLimit() && (int) $this->attributes['stock'] <= 0;
     }
 
     public function userPlans(): HasMany

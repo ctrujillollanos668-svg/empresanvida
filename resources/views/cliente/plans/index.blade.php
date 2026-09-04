@@ -96,11 +96,26 @@
             @foreach($availablePlans as $plan)
                 <div class="bg-slate-900/70 border border-slate-800 hover:border-emerald-500/40 rounded-3xl p-5 flex flex-col justify-between transition-all duration-300">
                     <div>
-                        @if($plan->badge)
-                            <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-[10px] font-extrabold uppercase">
-                                {{ $plan->badge }}
-                            </span>
-                        @endif
+                        <div class="flex items-center justify-between gap-2">
+                            <div>
+                                @if($plan->badge)
+                                    <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-[10px] font-extrabold uppercase">
+                                        {{ $plan->badge }}
+                                    </span>
+                                @endif
+                            </div>
+                            @if($plan->hasStockLimit())
+                                @if($plan->isSoldOut())
+                                    <span class="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-extrabold uppercase">
+                                        🔴 Agotado
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold">
+                                        ⚡ Quedan {{ $plan->stock }} cupos
+                                    </span>
+                                @endif
+                            @endif
+                        </div>
                         <h3 class="text-xl font-extrabold text-white mt-2">{{ $plan->name }}</h3>
                         <p class="text-xs text-slate-400 mt-1 min-h-[30px]">{{ $plan->description ?? 'Rendimiento diario fijo garantizado.' }}</p>
 
@@ -118,9 +133,15 @@
                     </div>
 
                     <div>
-                        <button type="button" onclick="openBuyModal({{ $plan->id }}, '{{ addslashes($plan->name) }}', {{ $plan->price }}, '{{ number_format($plan->price, 0, ',', '.') }}', '{{ $plan->daily_percentage }}', '{{ $plan->duration_days }}')" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/20 transition cursor-pointer active:scale-95">
-                            ⚡ Activar Este Plan
-                        </button>
+                        @if($plan->isSoldOut())
+                            <button type="button" disabled class="w-full py-3 bg-slate-800 text-slate-500 text-xs font-extrabold rounded-2xl border border-slate-700 cursor-not-allowed">
+                                ❌ Agotado (Sin cupos)
+                            </button>
+                        @else
+                            <button type="button" onclick="openBuyModal({{ $plan->id }}, '{{ addslashes($plan->name) }}', {{ $plan->price }}, '{{ number_format($plan->price, 0, ',', '.') }}', '{{ $plan->daily_percentage }}', '{{ $plan->duration_days }}')" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/20 transition cursor-pointer active:scale-95">
+                                ⚡ Activar Este Plan
+                            </button>
+                        @endif
                     </div>
                 </div>
             @endforeach

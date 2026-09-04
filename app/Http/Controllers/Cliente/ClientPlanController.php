@@ -30,6 +30,10 @@ class ClientPlanController extends Controller
         $plan = Plan::where('status', true)->findOrFail($id);
         $user = Auth::user();
 
+        if ($plan->isSoldOut()) {
+            return back()->with('error', '⚠️ Este paquete VIP ya se encuentra agotado (se vendieron todas las unidades disponibles).');
+        }
+
         $request->validate([
             'payment_source' => 'required|in:deposit,earnings',
         ], [
@@ -53,6 +57,11 @@ class ClientPlanController extends Controller
         }
 
         DB::transaction(function () use ($user, $plan, $source) {
+            // 0. Descontar una unidad del inventario/stock si tiene límite
+            if ($plan->hasStockLimit() && $plan->stock > 0) {
+                $plan->decrement('stock');
+            }
+
             // 1. Descontar precio del plan del saldo del usuario
             $user->balance -= $plan->price;
             $user->save();

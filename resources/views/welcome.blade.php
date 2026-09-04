@@ -469,7 +469,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
             @if(isset($plans) && $plans->count() > 0)
                 @foreach($plans as $plan)
-                    <div class="bg-slate-900/80 border {{ $plan->badge ? 'border-emerald-500 shadow-emerald-500/20 scale-105' : 'border-slate-800' }} hover:border-emerald-500/50 rounded-3xl p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 relative overflow-hidden group shadow-xl">
+                    <div class="bg-slate-900/80 border {{ $plan->badge ? 'border-emerald-500 shadow-emerald-500/20 scale-105' : 'border-slate-800' }} hover:border-emerald-500/50 rounded-3xl p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 relative overflow-hidden group shadow-xl {{ $plan->isSoldOut() ? 'opacity-60 grayscale' : '' }}">
                         @if($plan->badge)
                             <div class="absolute -right-12 top-7 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 text-[10px] font-extrabold uppercase py-1 px-12 rotate-45 shadow-md">
                                 {{ $plan->badge }}
@@ -477,10 +477,21 @@
                         @endif
 
                         <div>
-                            <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-bold">
-                                {{ $plan->badge ?? 'Membresía VIP' }}
-                            </span>
-                            <h3 class="text-2xl font-extrabold text-white mt-3">{{ $plan->name }}</h3>
+                            <div class="flex items-center gap-2 flex-wrap mb-2">
+                                <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-bold">
+                                    {{ $plan->badge ?? 'Membresía VIP' }}
+                                </span>
+                                @if($plan->isSoldOut())
+                                    <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-black uppercase border border-rose-500/40">
+                                        🔴 Agotado
+                                    </span>
+                                @elseif($plan->hasStockLimit())
+                                    <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-black uppercase border border-amber-500/40">
+                                        ⚡ Quedan {{ $plan->stock }} cupos
+                                    </span>
+                                @endif
+                            </div>
+                            <h3 class="text-2xl font-extrabold text-white mt-1">{{ $plan->name }}</h3>
                             <p class="text-xs text-slate-400 mt-1 min-h-[32px]">{{ $plan->description ?? 'Rendimiento diario fijo garantizado en COP.' }}</p>
 
                             <div class="my-6 py-4 border-y border-slate-800">
@@ -500,16 +511,22 @@
                             </ul>
                         </div>
 
-                        @auth
-                            <!-- Botón para usuario autenticado hacia la sección de activación con selección de saldo -->
-                            <a href="{{ route('cliente.plans.index') }}" class="mt-8 block w-full py-4 {{ $plan->badge ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-lg shadow-emerald-500/25' : 'bg-slate-800 hover:bg-slate-700 text-white font-bold' }} text-xs rounded-xl text-center transition cursor-pointer active:scale-95">
-                                ⚡ Activar {{ $plan->name }}
-                            </a>
-                        @else
-                            <button onclick="openAuthModal('register')" class="mt-8 w-full py-4 {{ $plan->badge ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25' : 'bg-slate-800 hover:bg-slate-700 text-white' }} font-extrabold text-xs rounded-xl text-center transition cursor-pointer">
-                                Activar {{ $plan->name }} ⚡
+                        @if($plan->isSoldOut())
+                            <button type="button" disabled class="mt-8 w-full py-4 bg-slate-800 text-slate-500 font-bold text-xs rounded-xl text-center cursor-not-allowed border border-slate-700">
+                                ❌ Agotado (Sin cupos disponibles)
                             </button>
-                        @endauth
+                        @else
+                            @auth
+                                <!-- Botón para usuario autenticado hacia la sección de activación con selección de saldo -->
+                                <a href="{{ route('cliente.plans.index') }}" class="mt-8 block w-full py-4 {{ $plan->badge ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-lg shadow-emerald-500/25' : 'bg-slate-800 hover:bg-slate-700 text-white font-bold' }} text-xs rounded-xl text-center transition cursor-pointer active:scale-95">
+                                    ⚡ Activar {{ $plan->name }}
+                                </a>
+                            @else
+                                <button onclick="openAuthModal('register')" class="mt-8 w-full py-4 {{ $plan->badge ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25' : 'bg-slate-800 hover:bg-slate-700 text-white' }} font-extrabold text-xs rounded-xl text-center transition cursor-pointer">
+                                    Activar {{ $plan->name }} ⚡
+                                </button>
+                            @endauth
+                        @endif
                     </div>
                 @endforeach
             @else
