@@ -117,31 +117,53 @@ class User extends Authenticatable
     }
 
     /**
-     * Total dinero invertido en compras de planes VIP.
+     * Total dinero de recarga que ha sido consumido para comprar planes VIP.
      */
-    public function totalInvestedInPlans(): float
+    public function totalDepositSpentOnPlans(): float
     {
-        return (float) $this->userPlans()->sum('invested_amount');
+        return (float) abs($this->transactions()
+            ->whereIn('type', ['plan_purchase', 'plan_purchase_deposit'])
+            ->sum('amount'));
+    }
+
+    /**
+     * Saldo de recargas disponible exclusivamente para comprar planes VIP.
+     */
+    public function rechargeBalance(): float
+    {
+        $deposited = $this->totalDeposited();
+        $spent = $this->totalDepositSpentOnPlans();
+        $remaining = max(0, round($deposited - $spent, 2));
+
+        return min((float) $this->balance, $remaining);
+    }
+
+    /**
+     * Saldo de ganancias acumuladas (rendimientos diarios, comisiones de referidos,
+     * premios de ruleta y bonos).
+     * Este saldo se puede retirar o re-invertir en nuevos planes VIP.
+     */
+    public function earningsBalance(): float
+    {
+        $currentBalance = (float) $this->balance;
+        $recharge = $this->rechargeBalance();
+
+        return max(0, round($currentBalance - $recharge, 2));
     }
 
     /**
      * Saldo de recarga que aún no ha sido invertido en planes VIP.
-     * Este saldo no es retirable directamente.
      */
     public function uninvestedDeposit(): float
     {
-        return max(0, round($this->totalDeposited() - $this->totalInvestedInPlans(), 2));
+        return $this->rechargeBalance();
     }
 
     /**
-     * Saldo disponible exclusivamente para retiro (ganancias de planes,
-     * comisiones por referidos, premios de ruleta y bonos).
+     * Saldo retirable: Únicamente las ganancias obtenidas.
      */
     public function withdrawableBalance(): float
     {
-        $currentBalance = (float) $this->balance;
-        $uninvested = $this->uninvestedDeposit();
-
-        return max(0, round($currentBalance - $uninvested, 2));
+        return $this->earningsBalance();
     }
 }

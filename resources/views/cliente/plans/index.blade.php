@@ -6,16 +6,22 @@
 <div class="space-y-6">
 
     <!-- Encabezado -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2">
                 <span>⚡</span> Membresías y Rendimiento Diario
             </h1>
             <p class="text-xs text-slate-400 mt-0.5">Activa paquetes y reclama tu porcentaje cada 24 horas.</p>
         </div>
-        <div class="text-right">
-            <span class="text-[11px] text-slate-400">Saldo:</span>
-            <p class="text-base font-extrabold text-emerald-400 font-mono">${{ number_format($user->balance, 0, ',', '.') }} COP</p>
+        <div class="flex items-center gap-2.5">
+            <div class="px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl">
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">💳 Saldo Recargas</span>
+                <p class="text-xs sm:text-sm font-black text-white font-mono">${{ number_format($rechargeBalance, 0, ',', '.') }}</p>
+            </div>
+            <div class="px-3 py-1.5 bg-slate-900/90 border border-emerald-500/30 rounded-2xl">
+                <span class="text-[10px] text-emerald-400 uppercase tracking-wider block font-semibold">💎 Saldo Ganancias</span>
+                <p class="text-xs sm:text-sm font-black text-emerald-400 font-mono">${{ number_format($earningsBalance, 0, ',', '.') }}</p>
+            </div>
         </div>
     </div>
 
@@ -111,28 +117,77 @@
                         </div>
                     </div>
 
-                    <form id="buy-plan-{{ $plan->id }}" method="POST" action="{{ route('cliente.plans.buy', $plan->id) }}">
-                        @csrf
-                        <button type="button" onclick="Swal.fire({
-                            title: '¿Activar {{ $plan->name }}?',
-                            html: 'Se descontarán <b class=\'text-emerald-400\'>${{ number_format($plan->price, 0, ',', '.') }} COP</b> de tu saldo disponible.<br><br><span class=\'text-xs text-slate-400\'>Rendimiento: <b>{{ $plan->daily_percentage }}% diario</b> durante <b>{{ $plan->duration_days }} días</b></span>',
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonColor: '#10b981',
-                            cancelButtonColor: '#334155',
-                            confirmButtonText: '⚡ Sí, Activar Plan',
-                            cancelButtonText: 'Cancelar',
-                            customClass: { popup: 'swal-custom-dark' }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                document.getElementById('buy-plan-{{ $plan->id }}').submit();
-                            }
-                        })" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/20 transition cursor-pointer active:scale-95">
+                    <div>
+                        <button type="button" onclick="openBuyModal({{ $plan->id }}, '{{ addslashes($plan->name) }}', {{ $plan->price }}, '{{ number_format($plan->price, 0, ',', '.') }}', '{{ $plan->daily_percentage }}', '{{ $plan->duration_days }}')" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-xs font-extrabold rounded-2xl shadow-lg shadow-emerald-500/20 transition cursor-pointer active:scale-95">
                             ⚡ Activar Este Plan
                         </button>
-                    </form>
+                    </div>
                 </div>
             @endforeach
+        </div>
+    </div>
+
+    <!-- Modal Selección de Saldo para Comprar Plan -->
+    <div id="chooseWalletModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative text-xs space-y-4">
+            <div class="flex items-start justify-between">
+                <div>
+                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-extrabold uppercase">Activar Membresía</span>
+                    <h3 id="modalPlanName" class="text-lg font-black text-white mt-1">Nombre del Plan</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Costo: <strong id="modalPlanPrice" class="text-emerald-400 font-mono text-sm">$0 COP</strong></p>
+                </div>
+                <button type="button" onclick="closeChooseWalletModal()" class="text-slate-400 hover:text-white text-base font-bold transition cursor-pointer">✕</button>
+            </div>
+
+            <p class="text-slate-300 text-xs font-semibold">
+                ¿Con qué saldo deseas activar este plan? Elige una opción:
+            </p>
+
+            <form id="confirmBuyForm" method="POST" action="">
+                @csrf
+                <input type="hidden" name="payment_source" id="selectedPaymentSource" value="">
+
+                <div class="space-y-2.5">
+                    <!-- Opción 1: Saldo de Recargas -->
+                    <div id="cardWalletDeposit" onclick="selectWallet('deposit')" class="p-3.5 bg-slate-950 border-2 border-slate-800 rounded-2xl cursor-pointer transition flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">
+                                💳
+                            </div>
+                            <div>
+                                <h4 class="font-black text-white text-xs">Saldo de Recargas</h4>
+                                <span class="text-[11px] text-slate-400 font-mono block">Disponible: ${{ number_format($rechargeBalance, 0, ',', '.') }} COP</span>
+                            </div>
+                        </div>
+                        <div id="badgeWalletDeposit"></div>
+                    </div>
+
+                    <!-- Opción 2: Saldo de Ganancias -->
+                    <div id="cardWalletEarnings" onclick="selectWallet('earnings')" class="p-3.5 bg-slate-950 border-2 border-slate-800 rounded-2xl cursor-pointer transition flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
+                                💎
+                            </div>
+                            <div>
+                                <h4 class="font-black text-white text-xs">Saldo de Ganancias (Re-inversión)</h4>
+                                <span class="text-[11px] text-emerald-400 font-mono block">Disponible: ${{ number_format($earningsBalance, 0, ',', '.') }} COP</span>
+                            </div>
+                        </div>
+                        <div id="badgeWalletEarnings"></div>
+                    </div>
+                </div>
+
+                <div id="walletErrorMsg" class="hidden mt-3 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-[11px]"></div>
+
+                <div class="pt-3 space-y-2">
+                    <button type="submit" id="btnConfirmBuy" disabled class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black rounded-2xl shadow-lg shadow-emerald-500/25 transition active:scale-95 text-xs sm:text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                        ⚡ Confirmar y Activar Plan
+                    </button>
+                    <button type="button" onclick="closeChooseWalletModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-2xl text-xs transition cursor-pointer">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -248,5 +303,96 @@
         });
     }
     document.addEventListener('DOMContentLoaded', startCountdownTimers);
+
+    // Lógica del Modal de Selección de Saldo (Recarga vs Ganancias)
+    const userRechargeBalance = {{ (float) $rechargeBalance }};
+    const userEarningsBalance = {{ (float) $earningsBalance }};
+    let currentPlanPrice = 0;
+
+    function openBuyModal(planId, planName, planPrice, planPriceFormatted, dailyPercent, durationDays) {
+        currentPlanPrice = parseFloat(planPrice);
+        document.getElementById('modalPlanName').innerText = planName;
+        document.getElementById('modalPlanPrice').innerText = '$' + planPriceFormatted + ' COP';
+        document.getElementById('confirmBuyForm').action = "{{ url('/plans') }}/" + planId + "/buy";
+        document.getElementById('selectedPaymentSource').value = '';
+        document.getElementById('btnConfirmBuy').disabled = true;
+        document.getElementById('walletErrorMsg').classList.add('hidden');
+
+        // Evaluar disponibilidad de Saldo de Recargas
+        const canDeposit = userRechargeBalance >= currentPlanPrice;
+        const badgeDep = document.getElementById('badgeWalletDeposit');
+        badgeDep.innerHTML = canDeposit 
+            ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-extrabold">✅ Disponible</span>'
+            : '<span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-extrabold">❌ Insuficiente</span>';
+
+        // Evaluar disponibilidad de Saldo de Ganancias
+        const canEarnings = userEarningsBalance >= currentPlanPrice;
+        const badgeEarn = document.getElementById('badgeWalletEarnings');
+        badgeEarn.innerHTML = canEarnings 
+            ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-extrabold">✅ Disponible</span>'
+            : '<span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-extrabold">❌ Insuficiente</span>';
+
+        resetWalletCards();
+
+        // Auto-seleccionar la opción disponible que tenga fondos
+        if (canDeposit) {
+            selectWallet('deposit');
+        } else if (canEarnings) {
+            selectWallet('earnings');
+        } else {
+            document.getElementById('walletErrorMsg').innerText = '⚠️ No tienes saldo suficiente en ninguna de las dos fuentes para este plan ($' + planPriceFormatted + ' COP). Por favor recarga saldo primero.';
+            document.getElementById('walletErrorMsg').classList.remove('hidden');
+        }
+
+        document.getElementById('chooseWalletModal').classList.remove('hidden');
+    }
+
+    function closeChooseWalletModal() {
+        document.getElementById('chooseWalletModal').classList.add('hidden');
+    }
+
+    function resetWalletCards() {
+        const cardDep = document.getElementById('cardWalletDeposit');
+        const cardEarn = document.getElementById('cardWalletEarnings');
+        if (cardDep) {
+            cardDep.className = 'p-3.5 bg-slate-950 border-2 border-slate-800 rounded-2xl cursor-pointer transition flex items-center justify-between hover:border-slate-700';
+        }
+        if (cardEarn) {
+            cardEarn.className = 'p-3.5 bg-slate-950 border-2 border-slate-800 rounded-2xl cursor-pointer transition flex items-center justify-between hover:border-slate-700';
+        }
+    }
+
+    function selectWallet(source) {
+        const canPay = source === 'deposit' ? (userRechargeBalance >= currentPlanPrice) : (userEarningsBalance >= currentPlanPrice);
+        const errorDiv = document.getElementById('walletErrorMsg');
+
+        resetWalletCards();
+
+        if (!canPay) {
+            const label = source === 'deposit' ? 'Saldo de Recargas' : 'Saldo de Ganancias';
+            errorDiv.innerText = `⚠️ Tu ${label} no alcanza para activar este plan ($${currentPlanPrice.toLocaleString('es-CO')} COP).`;
+            errorDiv.classList.remove('hidden');
+            document.getElementById('selectedPaymentSource').value = '';
+            document.getElementById('btnConfirmBuy').disabled = true;
+            return;
+        }
+
+        errorDiv.classList.add('hidden');
+        document.getElementById('selectedPaymentSource').value = source;
+        document.getElementById('btnConfirmBuy').disabled = false;
+
+        if (source === 'deposit') {
+            document.getElementById('cardWalletDeposit').className = 'p-3.5 bg-slate-950 border-2 border-emerald-500 shadow-lg shadow-emerald-500/10 rounded-2xl cursor-pointer transition flex items-center justify-between';
+        } else {
+            document.getElementById('cardWalletEarnings').className = 'p-3.5 bg-slate-950 border-2 border-emerald-500 shadow-lg shadow-emerald-500/10 rounded-2xl cursor-pointer transition flex items-center justify-between';
+        }
+    }
+
+    // Cerrar modal al hacer clic en el backdrop
+    document.getElementById('chooseWalletModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeChooseWalletModal();
+        }
+    });
 </script>
 @endsection

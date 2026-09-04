@@ -19,21 +19,40 @@ class ClientPlanController extends Controller
         $availablePlans = Plan::where('status', true)->get();
         $activePlans = $user->userPlans()->with('plan')->where('status', 'active')->get();
         $completedPlans = $user->userPlans()->with('plan')->where('status', 'completed')->get();
+        $rechargeBalance = $user->rechargeBalance();
+        $earningsBalance = $user->earningsBalance();
 
-        return view('cliente.plans.index', compact('user', 'availablePlans', 'activePlans', 'completedPlans'));
+        return view('cliente.plans.index', compact('user', 'availablePlans', 'activePlans', 'completedPlans', 'rechargeBalance', 'earningsBalance'));
     }
 
-    public function buy($id)
+    public function buy(Request $request, $id)
     {
         $plan = Plan::where('status', true)->findOrFail($id);
         $user = Auth::user();
 
-        if ($user->balance < $plan->price) {
-            return redirect()->route('cliente.deposits.index')
-                ->with('error', 'Saldo insuficiente para activar este plan ($' . number_format($plan->price, 0, ',', '.') . ' COP). Por favor recarga saldo primero.');
+        $request->validate([
+            'payment_source' => 'required|in:deposit,earnings',
+        ], [
+            'payment_source.required' => 'Debes seleccionar el saldo con el que deseas activar el plan.',
+            'payment_source.in' => 'El tipo de saldo seleccionado no es válido.',
+        ]);
+
+        $source = $request->input('payment_source');
+        $rechargeBalance = $user->rechargeBalance();
+        $earningsBalance = $user->earningsBalance();
+
+        if ($source === 'deposit') {
+            if ($rechargeBalance < $plan->price) {
+                return back()->with('error', 'Saldo de Recargas insuficiente ($' . number_format($rechargeBalance, 0, ',', '.') . ' COP disponibles). Necesitas $' . number_format($plan->price, 0, ',', '.') . ' COP de recarga o puedes usar tu Saldo de Ganancias si tienes disponible.');
+            }
+        } else {
+            // Re-inversión de ganancias
+            if ($earningsBalance < $plan->price) {
+                return back()->with('error', 'Saldo de Ganancias insuficiente ($' . number_format($earningsBalance, 0, ',', '.') . ' COP disponibles). Necesitas $' . number_format($plan->price, 0, ',', '.') . ' COP de ganancias acumuladas para re-invertir.');
+            }
         }
 
-        DB::transaction(function () use ($user, $plan) {
+        DB::transaction(function () use ($user, $plan, $source) {
             // 1. Descontar precio del plan del saldo del usuario
             $user->balance -= $plan->price;
             $user->save();
@@ -53,13 +72,18 @@ class ClientPlanController extends Controller
                 'status' => 'active',
             ]);
 
-            // 4. Registrar transacción de compra
+            // 4. Registrar transacción según el origen seleccionado
+            $txType = $source === 'deposit' ? 'plan_purchase_deposit' : 'plan_purchase_earnings';
+            $txDesc = $source === 'deposit' 
+                ? 'Activación de Membresía con Saldo Recargado: ' . $plan->name 
+                : 'Re-inversión de Membresía con Saldo de Ganancias: ' . $plan->name;
+
             Transaction::create([
                 'user_id' => $user->id,
-                'type' => 'plan_purchase',
+                'type' => $txType,
                 'amount' => -$plan->price,
                 'balance_after' => $user->balance,
-                'description' => 'Activación de Membresía: ' . $plan->name,
+                'description' => $txDesc,
             ]);
 
             // 5. Pagar comisión del 10% al patrocinador (Nivel 1)
@@ -91,8 +115,9 @@ class ClientPlanController extends Controller
             }
         });
 
+        $walletLabel = $source === 'deposit' ? 'Saldo de Recargas' : 'Saldo de Ganancias';
         return redirect()->route('cliente.plans.index')
-            ->with('success', '🎉 ¡Felicidades! Has activado el ' . $plan->name . '. Tu primer rendimiento de 24 horas ya comenzó a correr.');
+            ->with('success', '🎉 ¡Felicidades! Has activado el ' . $plan->name . ' usando tu ' . $walletLabel . '. Tu primer rendimiento de 24 horas ya comenzó a correr.');
     }
 
     public function claimDaily(Request $request, $id)
