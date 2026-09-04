@@ -12,9 +12,10 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    // Redirigir siempre a la página principal con el modal abierto
+    // Redirigir siempre a la página principal con el modal de registro abierto y el código de patrocinador
     Route::get('register', function () {
-        return redirect('/?auth=register' . (request('ref') ? '&ref=' . request('ref') : ''));
+        $ref = request('ref') ?: request('referral_code') ?: request('referred_by');
+        return redirect('/?auth=register' . ($ref ? '&ref=' . urlencode($ref) : ''));
     })->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);

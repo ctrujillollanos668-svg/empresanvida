@@ -748,7 +748,7 @@
 
                     <div>
                         <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Código de Referido / Patrocinador</label>
-                        <input id="modalRefInput" type="text" name="referred_by" value="{{ request('ref') }}" placeholder="Opcional (Ej: VIP-777)" class="w-full px-4 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-emerald-400 font-mono focus:outline-none focus:border-emerald-500">
+                        <input id="modalRefInput" type="text" name="referral_code" value="{{ old('referral_code', request('ref') ?: request('referral_code') ?: request('referred_by')) }}" placeholder="Opcional (Ej: VIP-777)" class="w-full px-4 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-emerald-400 font-mono uppercase focus:outline-none focus:border-emerald-500">
                     </div>
 
                     <div class="grid grid-cols-2 gap-2">
@@ -850,9 +850,30 @@
 
         @if ($errors->any())
             document.addEventListener('DOMContentLoaded', function() {
-                openAuthModal('{{ old("name") || old("phone") || old("referred_by") ? "register" : "login" }}');
+                openAuthModal('{{ old("name") || old("phone") || old("referral_code") || old("referred_by") ? "register" : "login" }}');
+            });
+        @elseif (request('ref') || request('referral_code') || request('auth') === 'register')
+            document.addEventListener('DOMContentLoaded', function() {
+                openAuthModal('register');
+            });
+        @elseif (request('auth') === 'login')
+            document.addEventListener('DOMContentLoaded', function() {
+                openAuthModal('login');
             });
         @endif
+
+        // Client-side fallback to read URL params if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const refParam = params.get('ref') || params.get('referral_code') || params.get('referred_by');
+            if (refParam) {
+                const refInput = document.getElementById('modalRefInput');
+                if (refInput && !refInput.value) {
+                    refInput.value = refParam;
+                }
+                openAuthModal('register');
+            }
+        });
 
         // Dropdown de Usuario VIP
         function toggleUserDropdown() {

@@ -21,7 +21,7 @@ class RegisteredUserController extends Controller
      */
     public function create(Request $request): View
     {
-        $referralCode = $request->query('ref');
+        $referralCode = $request->query('ref') ?: $request->query('referral_code') ?: $request->query('referred_by');
         return view('auth.register', compact('referralCode'));
     }
 
@@ -32,19 +32,31 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Normalizar y capturar código de referido desde cualquier parámetro
+        $rawRef = $request->input('referral_code') ?: $request->input('referred_by') ?: $request->input('ref');
+        if ($rawRef) {
+            $request->merge(['referral_code' => trim($rawRef)]);
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'phone' => ['nullable', 'string', 'max:30'],
-            'referral_code' => ['nullable', 'string', 'exists:users,referral_code'],
+            'referral_code' => ['nullable', 'string'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
-            'referral_code.exists' => 'El código de referido ingresado no es válido.',
+            'name.required' => 'Por favor ingresa tu nombre completo.',
+            'email.required' => 'Por favor ingresa tu correo electrónico.',
+            'email.unique' => 'Este correo electrónico ya se encuentra registrado.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
         $sponsorId = null;
         if ($request->filled('referral_code')) {
-            $sponsor = User::where('referral_code', $request->referral_code)->first();
+            $code = strtoupper(trim($request->referral_code));
+            // Buscar patrocinador insensible a mayúsculas/minúsculas
+            $sponsor = User::whereRaw('UPPER(referral_code) = ?', [$code])->first();
             if ($sponsor) {
                 $sponsorId = $sponsor->id;
             }
@@ -66,6 +78,14 @@ class RegisteredUserController extends Controller
             'referred_by' => $sponsorId,
             'status' => 'active',
         ]);
+
+        // Premiar al patrocinador con 1 giro adicional de ruleta por invitar
+        if ($sponsorId) {
+            $sponsor = User::find($sponsorId);
+            if ($sponsor) {
+                $sponsor->increment('roulette_spins', 1);
+            }
+        }
 
         event(new Registered($user));
 
