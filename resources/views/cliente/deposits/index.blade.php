@@ -6,16 +6,16 @@
 <div class="space-y-6">
 
     <!-- Encabezado -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
             <h1 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2">
                 <span>➕</span> Recargar Saldo
             </h1>
-            <p class="text-xs text-slate-400 mt-0.5">Transfiere escaneando el código QR oficial a cualquiera de las siguientes cuentas y reporta tu comprobante.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Transfiere escaneando el código QR oficial y reporta tu comprobante.</p>
         </div>
-        <div class="text-right">
+        <div class="self-start sm:self-auto px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-2xl flex items-center gap-2">
             <span class="text-[11px] text-slate-400">Saldo Actual:</span>
-            <p class="text-base font-extrabold text-emerald-400 font-mono">${{ number_format($user->balance, 0, ',', '.') }} COP</p>
+            <p class="text-sm sm:text-base font-extrabold text-emerald-400 font-mono">${{ number_format($user->balance, 0, ',', '.') }} COP</p>
         </div>
     </div>
 
@@ -74,7 +74,7 @@
     </div>
 
     <!-- Formulario para Reportar el Pago -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl">
+    <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 sm:p-7 shadow-2xl">
         <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
             <span>📝</span> Reportar Comprobante de Transferencia
         </h3>
@@ -169,9 +169,9 @@
 <!-- MODAL EMERGENTE PARA VER Y ESCANEAR EL QR -->
 <!-- ========================================== -->
 <div id="qrModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative text-center">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-8 max-w-sm w-full shadow-2xl relative text-center max-h-[94vh] overflow-y-auto">
         <!-- Cerrar -->
-        <button onclick="closeQrModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white text-2xl font-bold transition">
+        <button onclick="closeQrModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white text-2xl font-bold transition cursor-pointer">
             ✕
         </button>
 
@@ -179,8 +179,8 @@
         <p class="text-xs text-slate-400 mb-4">Abre tu app bancaria y escanea este código para transferir</p>
 
         <!-- Contenedor del QR -->
-        <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4 border border-slate-200">
-            <div id="qrImageContainer" class="w-60 h-60 flex items-center justify-center">
+        <div class="bg-white p-3 sm:p-4 rounded-2xl inline-block shadow-xl mb-4 border border-slate-200">
+            <div id="qrImageContainer" class="w-52 h-52 sm:w-60 sm:h-60 flex items-center justify-center">
                 <!-- Se inyecta dinámicamente -->
             </div>
         </div>

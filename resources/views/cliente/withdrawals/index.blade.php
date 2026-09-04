@@ -6,18 +6,18 @@
 <div class="max-w-lg mx-auto space-y-6 pb-12">
 
     <!-- Encabezado -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
             <h1 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2">
                 <span>💸</span> Solicitar Retiro
             </h1>
             <p class="text-xs text-slate-400 mt-0.5">Transfiere tus ganancias acumuladas a tu cuenta bancaria o billetera.</p>
         </div>
-        <div class="text-right">
-            <span class="text-[11px] text-slate-400">Ganancias Retirables:</span>
-            <p class="text-lg font-black text-emerald-400 font-mono">${{ number_format($withdrawableBalance, 0, ',', '.') }} COP</p>
+        <div class="self-start sm:self-auto px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-2xl">
+            <span class="text-[10px] text-slate-400 block font-semibold">Ganancias Retirables:</span>
+            <p class="text-base sm:text-lg font-black text-emerald-400 font-mono">${{ number_format($withdrawableBalance, 0, ',', '.') }} COP</p>
             @if($uninvestedDeposit > 0)
-                <span class="text-[10px] text-amber-400/90 font-medium block">Recarga p/ Planes: ${{ number_format($uninvestedDeposit, 0, ',', '.') }}</span>
+                <span class="text-[10px] text-amber-400/90 font-medium block mt-0.5">Recarga p/ Planes: ${{ number_format($uninvestedDeposit, 0, ',', '.') }}</span>
             @endif
         </div>
     </div>
@@ -40,7 +40,7 @@
     @endif
 
     <!-- Formulario de Retiro -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-4">
+    <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 sm:p-7 shadow-2xl space-y-4">
         <form method="POST" action="{{ route('cliente.withdrawals.store') }}" class="space-y-4 text-xs">
             @csrf
 
@@ -51,7 +51,7 @@
                     <span class="text-[10px] text-slate-400">Retirable: <b class="text-emerald-400 font-mono">${{ number_format($withdrawableBalance, 0, ',', '.') }}</b></span>
                 </div>
                 <div class="relative">
-                    <input type="number" id="withdraw_amount_input" step="1000" min="15000" max="{{ $withdrawableBalance }}" name="amount" required placeholder="Ej: 50000" oninput="calcWithdrawalFee()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-white font-mono text-base focus:outline-none focus:border-cyan-500">
+                    <input type="number" id="withdraw_amount_input" step="1000" min="15000" max="{{ $withdrawableBalance }}" name="amount" required placeholder="Ej: 50000" oninput="calcWithdrawalFee()" class="w-full pl-4 pr-24 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-white font-mono text-base focus:outline-none focus:border-cyan-500">
                     <button type="button" onclick="setMaxAmount({{ $withdrawableBalance }})" class="absolute right-3 top-2.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-bold rounded-xl transition cursor-pointer">
                         MÁXIMO
                     </button>

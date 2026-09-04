@@ -6,27 +6,27 @@
 <div class="space-y-6">
 
     <!-- Encabezado -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
             <h1 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2">
                 <span>👥</span> Mi Red y Equipo
             </h1>
             <p class="text-xs text-slate-400 mt-0.5">Gana comisiones pasivas de hasta 3 niveles por cada persona invitada.</p>
         </div>
-        <div class="text-right">
+        <div class="self-start sm:self-auto px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-2xl flex items-center gap-2">
             <span class="text-[11px] text-slate-400">Total Comisiones:</span>
-            <p class="text-base font-extrabold text-emerald-400 font-mono">${{ number_format($totalCommissions, 0, ',', '.') }} COP</p>
+            <p class="text-sm sm:text-base font-extrabold text-emerald-400 font-mono">${{ number_format($totalCommissions, 0, ',', '.') }} COP</p>
         </div>
     </div>
 
     <!-- Tarjeta del Enlace de Invitación -->
-    <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-cyan-950/40 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+    <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-cyan-950/40 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
         <h3 class="text-sm font-bold text-white mb-1">🔗 Tu Enlace Único de Patrocinador</h3>
         <p class="text-xs text-slate-400 mb-3">Las personas que se registren con este link quedarán vinculadas directamente bajo tu red.</p>
 
         <div class="flex items-center gap-2 bg-slate-950 p-2 rounded-2xl border border-slate-800">
-            <input id="refInput" type="text" readonly value="{{ url('/register?ref=' . $user->referral_code) }}" class="bg-transparent border-0 text-xs font-mono text-emerald-400 px-2 flex-1 focus:outline-none select-all">
-            <button onclick="copyRefLink()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition cursor-pointer">
+            <input id="refInput" type="text" readonly value="{{ url('/register?ref=' . $user->referral_code) }}" class="bg-transparent border-0 text-xs font-mono text-emerald-400 px-2 flex-1 min-w-0 truncate focus:outline-none select-all">
+            <button onclick="copyRefLink()" class="shrink-0 px-3 sm:px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition cursor-pointer">
                 📋 Copiar Link
             </button>
         </div>
@@ -46,31 +46,31 @@
     </div>
 
     <!-- Estructura de tu Pirámide (Tus Niveles) -->
-    <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-5">
-        <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+    <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-3.5 sm:p-5">
+        <h3 class="text-sm font-bold text-white mb-3 sm:mb-4 flex items-center gap-2">
             <span>🔺</span> Estructura de tu Red Piramidal
         </h3>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="grid grid-cols-3 gap-2 sm:gap-3">
             <!-- Nivel 1 -->
-            <div class="bg-slate-950/80 border border-emerald-500/30 rounded-2xl p-4 text-center">
-                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-extrabold uppercase">Nivel 1 (10%)</span>
-                <h4 class="text-2xl font-black text-white mt-2 font-mono">{{ $directReferrals->count() }}</h4>
-                <p class="text-[11px] text-slate-400">Invitados Directos</p>
+            <div class="bg-slate-950/80 border border-emerald-500/30 rounded-2xl p-2.5 sm:p-4 text-center">
+                <span class="px-1.5 sm:px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] sm:text-[10px] font-extrabold uppercase truncate block">Nivel 1 (10%)</span>
+                <h4 class="text-lg sm:text-2xl font-black text-white mt-1.5 sm:mt-2 font-mono">{{ $directReferrals->count() }}</h4>
+                <p class="text-[9px] sm:text-[11px] text-slate-400 truncate mt-0.5">Directos</p>
             </div>
 
             <!-- Nivel 2 -->
-            <div class="bg-slate-950/80 border border-cyan-500/30 rounded-2xl p-4 text-center">
-                <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-[10px] font-extrabold uppercase">Nivel 2 (5%)</span>
-                <h4 class="text-2xl font-black text-white mt-2 font-mono">{{ $level2Referrals->count() }}</h4>
-                <p class="text-[11px] text-slate-400">Invitados de tu Red</p>
+            <div class="bg-slate-950/80 border border-cyan-500/30 rounded-2xl p-2.5 sm:p-4 text-center">
+                <span class="px-1.5 sm:px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-[9px] sm:text-[10px] font-extrabold uppercase truncate block">Nivel 2 (5%)</span>
+                <h4 class="text-lg sm:text-2xl font-black text-white mt-1.5 sm:mt-2 font-mono">{{ $level2Referrals->count() }}</h4>
+                <p class="text-[9px] sm:text-[11px] text-slate-400 truncate mt-0.5">De tu Red</p>
             </div>
 
             <!-- Nivel 3 -->
-            <div class="bg-slate-950/80 border border-purple-500/30 rounded-2xl p-4 text-center">
-                <span class="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 text-[10px] font-extrabold uppercase">Nivel 3 (2%)</span>
-                <h4 class="text-2xl font-black text-white mt-2 font-mono">0</h4>
-                <p class="text-[11px] text-slate-400">Red Profunda</p>
+            <div class="bg-slate-950/80 border border-purple-500/30 rounded-2xl p-2.5 sm:p-4 text-center">
+                <span class="px-1.5 sm:px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 text-[9px] sm:text-[10px] font-extrabold uppercase truncate block">Nivel 3 (2%)</span>
+                <h4 class="text-lg sm:text-2xl font-black text-white mt-1.5 sm:mt-2 font-mono">0</h4>
+                <p class="text-[9px] sm:text-[11px] text-slate-400 truncate mt-0.5">Profunda</p>
             </div>
         </div>
     </div>

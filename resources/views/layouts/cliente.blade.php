@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>@yield('title', 'Mi Cuenta') - FORTEX</title>
     <link rel="icon" type="image/jpeg" href="{{ asset('img/fortex.jpg') }}">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,10 +11,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030712; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #030712; 
+            -webkit-tap-highlight-color: transparent;
+        }
         .bottom-nav-blur {
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
+        }
+        .bottom-nav-safe {
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        /* Prevenir zoom no deseado en dispositivos móviles al tocar inputs */
+        @media screen and (max-width: 768px) {
+            input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+                font-size: 16px !important;
+            }
         }
         .swal2-popup.swal-custom-dark {
             background: #090d16 !important;
@@ -42,7 +55,7 @@
         }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen pb-20 lg:pb-8 selection:bg-emerald-500 selection:text-black">
+<body class="text-slate-100 min-h-screen pb-28 lg:pb-10 selection:bg-emerald-500 selection:text-black">
 
     <!-- Luces Ambientales de Fondo -->
     <div class="fixed -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
@@ -50,7 +63,7 @@
 
     <!-- Barra Superior Adaptable (Mobile + Portátil/Desktop) -->
     <header class="sticky top-0 z-40 bg-slate-950/85 border-b border-slate-800/80 backdrop-blur-xl">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Logo -->
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
                 <div class="w-9 h-9 rounded-xl bg-black border border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-lg shadow-emerald-500/25">
@@ -118,34 +131,34 @@
     </main>
 
     <!-- BARRA DE NAVEGACIÓN INFERIOR PARA TELÉFONOS (SE OCULTA EN PORTÁTILES) -->
-    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/90 border-t border-slate-800/90 bottom-nav-blur lg:hidden">
-        <div class="max-w-md mx-auto px-6 h-16 flex items-center justify-between text-center">
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 border-t border-slate-800/90 bottom-nav-blur bottom-nav-safe lg:hidden">
+        <div class="max-w-md mx-auto px-2 sm:px-6 h-16 flex items-center justify-around text-center">
             <!-- 1. Inicio -->
-            <a href="{{ route('dashboard') }}" class="flex flex-col items-center gap-1 transition {{ request()->routeIs('dashboard') ? 'text-emerald-400 scale-105' : 'text-slate-400 hover:text-slate-200' }}">
-                <span class="text-lg">🏠</span>
+            <a href="{{ route('dashboard') }}" class="flex flex-col items-center gap-1 transition px-2 py-1 {{ request()->routeIs('dashboard') ? 'text-emerald-400 scale-105' : 'text-slate-400 hover:text-slate-200' }}">
+                <span class="text-lg leading-none">🏠</span>
                 <span class="text-[10px] font-bold">Inicio</span>
             </a>
 
             <!-- 2. Planes VIP -->
-            <a href="{{ route('cliente.plans.index') }}" class="flex flex-col items-center gap-1 transition {{ request()->routeIs('cliente.plans.*') ? 'text-emerald-400 scale-105' : 'text-slate-400 hover:text-slate-200' }}">
-                <span class="text-lg">⚡</span>
+            <a href="{{ route('cliente.plans.index') }}" class="flex flex-col items-center gap-1 transition px-2 py-1 {{ request()->routeIs('cliente.plans.*') ? 'text-emerald-400 scale-105' : 'text-slate-400 hover:text-slate-200' }}">
+                <span class="text-lg leading-none">⚡</span>
                 <span class="text-[10px] font-bold">Planes</span>
             </a>
 
             <!-- 3. Recargar (Botón Central Destacado) -->
-            <a href="{{ route('cliente.deposits.index') }}" class="-mt-5 w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center text-xl font-extrabold shadow-lg shadow-emerald-500/30 active:scale-95 transition">
+            <a href="{{ route('cliente.deposits.index') }}" class="-mt-5 w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center text-xl font-extrabold shadow-lg shadow-emerald-500/30 active:scale-95 transition shrink-0">
                 ➕
             </a>
 
             <!-- 4. Mi Equipo / Referidos -->
-            <a href="{{ route('cliente.team.index') }}" class="flex flex-col items-center gap-1 transition {{ request()->routeIs('cliente.team.*') ? 'text-emerald-400 scale-105' : 'text-slate-400 hover:text-slate-200' }}">
-                <span class="text-lg">👥</span>
+            <a href="{{ route('cliente.team.index') }}" class="flex flex-col items-center gap-1 transition px-2 py-1 {{ request()->routeIs('cliente.team.*') ? 'text-emerald-400 scale-105' : 'text-slate-400 hover:text-slate-200' }}">
+                <span class="text-lg leading-none">👥</span>
                 <span class="text-[10px] font-bold">Equipo</span>
             </a>
 
             <!-- 5. Retirar -->
-            <a href="{{ route('cliente.withdrawals.index') }}" class="flex flex-col items-center gap-1 transition {{ request()->routeIs('cliente.withdrawals.*') ? 'text-cyan-400 scale-105' : 'text-slate-400 hover:text-slate-200' }}">
-                <span class="text-lg">💸</span>
+            <a href="{{ route('cliente.withdrawals.index') }}" class="flex flex-col items-center gap-1 transition px-2 py-1 {{ request()->routeIs('cliente.withdrawals.*') ? 'text-cyan-400 scale-105' : 'text-slate-400 hover:text-slate-200' }}">
+                <span class="text-lg leading-none">💸</span>
                 <span class="text-[10px] font-bold">Retirar</span>
             </a>
         </div>

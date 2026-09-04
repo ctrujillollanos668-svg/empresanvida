@@ -49,7 +49,7 @@
             </p>
         </div>
 
-        <div class="relative z-10 flex items-center justify-between pt-3 border-t border-slate-800/80 mt-2">
+        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-800/80 mt-2">
             <div class="flex flex-col">
                 <div class="flex items-center gap-2">
                     <span class="text-[10px] text-slate-400">Saldo Total:</span>
@@ -59,11 +59,11 @@
                     <span class="text-[9px] text-cyan-400 font-medium">Retirable (ganancias): ${{ number_format(Auth::user()->withdrawableBalance(), 0, ',', '.') }} COP</span>
                 @endif
             </div>
-            <div class="flex items-center gap-2">
-                <a href="{{ route('cliente.deposits.index') }}" class="px-3 py-1 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-xl text-xs shadow-md transition active:scale-95">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <a href="{{ route('cliente.deposits.index') }}" class="flex-1 sm:flex-initial text-center px-3.5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-xl text-xs shadow-md transition active:scale-95">
                     ➕ Recargar
                 </a>
-                <a href="{{ route('cliente.withdrawals.index') }}" class="px-3 py-1 bg-slate-900 border border-slate-700 hover:border-cyan-500/40 text-cyan-300 font-bold rounded-xl text-xs transition active:scale-95">
+                <a href="{{ route('cliente.withdrawals.index') }}" class="flex-1 sm:flex-initial text-center px-3.5 py-1.5 bg-slate-900 border border-slate-700 hover:border-cyan-500/40 text-cyan-300 font-bold rounded-xl text-xs transition active:scale-95">
                     💸 Retirar
                 </a>
             </div>
@@ -83,79 +83,79 @@
     </div>
 
     <!-- 4. REJILLA DE 6 ICONOS DE ACCIÓN PRINCIPALES (3x2 PERFECTAMENTE ALINEADOS) -->
-    <div class="grid grid-cols-3 gap-2.5 bg-slate-900/70 border border-slate-800/90 rounded-3xl p-3.5 shadow-xl text-center">
+    <div class="grid grid-cols-3 gap-2 sm:gap-2.5 bg-slate-900/70 border border-slate-800/90 rounded-3xl p-2.5 sm:p-3.5 shadow-xl text-center">
         <!-- 1. Retiro -->
-        <a href="{{ route('cliente.withdrawals.index') }}" class="group flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 border border-cyan-500/40 text-cyan-300 flex items-center justify-center text-xl mb-1 shadow-md group-hover:scale-110 transition">
+        <a href="{{ route('cliente.withdrawals.index') }}" class="group flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 border border-cyan-500/40 text-cyan-300 flex items-center justify-center text-lg sm:text-xl mb-1 shadow-md group-hover:scale-110 transition">
                 💸
             </div>
-            <span class="text-xs font-bold text-slate-200">Retiro</span>
-            <span class="text-[9px] text-slate-500 font-semibold">Mín $15.000</span>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-200">Retiro</span>
+            <span class="text-[8px] sm:text-[9px] text-slate-500 font-semibold truncate max-w-full px-0.5">Mín $15.000</span>
         </a>
 
         <!-- 2. Recarga -->
-        <a href="{{ route('cliente.deposits.index') }}" class="group flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center text-xl mb-1 shadow-md group-hover:scale-110 transition">
+        <a href="{{ route('cliente.deposits.index') }}" class="group flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center text-lg sm:text-xl mb-1 shadow-md group-hover:scale-110 transition">
                 💳
             </div>
-            <span class="text-xs font-bold text-slate-200">Recarga</span>
-            <span class="text-[9px] text-slate-500 font-semibold">Nequi / QR</span>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-200">Recarga</span>
+            <span class="text-[8px] sm:text-[9px] text-slate-500 font-semibold truncate max-w-full px-0.5">Nequi / QR</span>
         </a>
 
         <!-- 3. Finanzas -->
-        <a href="{{ route('cliente.plans.index') }}" class="group flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-500/20 to-indigo-500/20 border border-purple-500/40 text-purple-300 flex items-center justify-center text-xl mb-1 shadow-md group-hover:scale-110 transition">
+        <a href="{{ route('cliente.plans.index') }}" class="group flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-purple-500/20 to-indigo-500/20 border border-purple-500/40 text-purple-300 flex items-center justify-center text-lg sm:text-xl mb-1 shadow-md group-hover:scale-110 transition">
                 📈
             </div>
-            <span class="text-xs font-bold text-slate-200">Finanzas</span>
-            <span class="text-[9px] text-slate-500 font-semibold">Rendimientos</span>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-200">Finanzas</span>
+            <span class="text-[8px] sm:text-[9px] text-slate-500 font-semibold truncate max-w-full px-0.5">Rendimientos</span>
         </a>
 
         <!-- 4. Centro de Ayuda -->
-        <button type="button" onclick="openSupportModal()" class="group flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95 cursor-pointer">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500/20 to-cyan-500/20 border border-sky-500/40 text-sky-300 flex items-center justify-center text-xl mb-1 shadow-md group-hover:scale-110 transition">
+        <button type="button" onclick="openSupportModal()" class="group flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95 cursor-pointer">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-sky-500/20 to-cyan-500/20 border border-sky-500/40 text-sky-300 flex items-center justify-center text-lg sm:text-xl mb-1 shadow-md group-hover:scale-110 transition">
                 👥
             </div>
-            <span class="text-xs font-bold text-slate-200">Ayuda</span>
-            <span class="text-[9px] text-slate-500 font-semibold">Soporte 24/7</span>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-200">Ayuda</span>
+            <span class="text-[8px] sm:text-[9px] text-slate-500 font-semibold truncate max-w-full px-0.5">Soporte 24/7</span>
         </button>
 
         <!-- 5. Invitar -->
-        <a href="{{ route('cliente.team.index') }}" class="group flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500/20 to-yellow-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center text-xl mb-1 shadow-md group-hover:scale-110 transition">
+        <a href="{{ route('cliente.team.index') }}" class="group flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-amber-500/20 to-yellow-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center text-lg sm:text-xl mb-1 shadow-md group-hover:scale-110 transition">
                 🔗
             </div>
-            <span class="text-xs font-bold text-slate-200">Invitar</span>
-            <span class="text-[9px] text-slate-500 font-semibold">10% Directo</span>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-200">Invitar</span>
+            <span class="text-[8px] sm:text-[9px] text-slate-500 font-semibold truncate max-w-full px-0.5">10% Directo</span>
         </a>
 
         <!-- 6. Sobre Nosotros -->
-        <button type="button" onclick="openAboutModal()" class="group flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95 cursor-pointer">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-500/20 to-emerald-500/20 border border-teal-500/40 text-teal-300 flex items-center justify-center text-xl mb-1 shadow-md group-hover:scale-110 transition">
+        <button type="button" onclick="openAboutModal()" class="group flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-2xl hover:bg-slate-800/60 transition active:scale-95 cursor-pointer">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-teal-500/20 to-emerald-500/20 border border-teal-500/40 text-teal-300 flex items-center justify-center text-lg sm:text-xl mb-1 shadow-md group-hover:scale-110 transition">
                 ℹ️
             </div>
-            <span class="text-xs font-bold text-slate-200">Nosotros</span>
-            <span class="text-[9px] text-slate-500 font-semibold">Seguridad</span>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-200">Nosotros</span>
+            <span class="text-[8px] sm:text-[9px] text-slate-500 font-semibold truncate max-w-full px-0.5">Seguridad</span>
         </button>
     </div>
 
     <!-- 5. BANNER HORIZONTAL: CERTIFICACIÓN Y SEGURIDAD OFICIAL -->
-    <div onclick="openAboutModal()" class="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-teal-950 border border-emerald-500/40 hover:border-emerald-400/80 rounded-2xl p-3.5 flex items-center justify-between shadow-xl shadow-emerald-950/40 cursor-pointer transition active:scale-[0.98]">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-xl flex-shrink-0 shadow-inner">
+    <div onclick="openAboutModal()" class="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-teal-950 border border-emerald-500/40 hover:border-emerald-400/80 rounded-2xl p-3 sm:p-3.5 flex items-center justify-between shadow-xl shadow-emerald-950/40 cursor-pointer transition active:scale-[0.98]">
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 pr-2">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-lg sm:text-xl flex-shrink-0 shadow-inner">
                 🛡️
             </div>
-            <div>
+            <div class="min-w-0">
                 <div class="flex items-center gap-1.5">
-                    <h3 class="text-xs sm:text-sm font-extrabold text-white">Certificado y Licencia de Operación</h3>
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <h3 class="text-xs sm:text-sm font-extrabold text-white truncate">Certificado y Licencia de Operación</h3>
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
                 </div>
-                <p class="text-[10px] text-slate-300">Auditoría 2026 • Fondos 100% respaldados y cifrado 256-bit</p>
+                <p class="text-[9px] sm:text-[10px] text-slate-300 truncate">Auditoría 2026 • Fondos respaldados</p>
             </div>
         </div>
-        <div class="flex items-center gap-1 text-emerald-400 text-xs font-black bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 rounded-xl">
+        <div class="shrink-0 flex items-center gap-1 text-emerald-400 text-[10px] sm:text-xs font-black bg-emerald-500/15 border border-emerald-500/30 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl">
             <span>Verificado</span>
-            <span class="text-sm">✓</span>
+            <span class="text-xs sm:text-sm">✓</span>
         </div>
     </div>
 
@@ -294,7 +294,7 @@
 
 <!-- Modal Selección de Saldo para Comprar Plan (Dashboard) -->
 <div id="chooseWalletModalDashboard" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative text-xs space-y-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-4 sm:p-7 shadow-2xl relative text-xs space-y-4 max-h-[94vh] overflow-y-auto">
         <div class="flex items-start justify-between">
             <div>
                 <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-extrabold uppercase">Activar Membresía</span>
@@ -358,7 +358,7 @@
 
 <!-- Modal Soporte / Centro de Ayuda -->
 <div id="supportModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative text-center">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 max-w-sm w-full shadow-2xl relative text-center max-h-[94vh] overflow-y-auto">
         <button onclick="closeSupportModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white text-xl font-bold">✕</button>
         <span class="text-4xl block mb-2">🎧</span>
         <h3 class="text-base font-extrabold text-white">Centro de Ayuda VIP</h3>
@@ -465,7 +465,7 @@
 
 <!-- Modal Ruleta de la Suerte VIP -->
 <div id="rouletteModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-amber-500/30 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative text-center">
+    <div class="bg-slate-900 border border-amber-500/30 rounded-3xl p-4 sm:p-6 max-w-sm w-full shadow-2xl relative text-center max-h-[94vh] overflow-y-auto">
         <button onclick="closeRouletteModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white text-xl font-bold cursor-pointer">✕</button>
         
         <div class="flex items-center justify-center gap-2 mb-1">
@@ -479,7 +479,7 @@
         </div>
 
         <!-- RUEDA GIRATORIA VISUAL CON PREMIOS -->
-        <div class="relative w-64 h-64 mx-auto mb-3 flex items-center justify-center">
+        <div class="relative w-56 h-56 sm:w-64 sm:h-64 mx-auto mb-3 flex items-center justify-center">
             <!-- Puntero Superior Dorado -->
             <div class="absolute -top-3 left-1/2 -translate-x-1/2 z-20 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[20px] border-t-amber-400 filter drop-shadow-[0_4px_8px_rgba(245,158,11,0.8)]"></div>
 
@@ -541,7 +541,7 @@
 
 <!-- Modal Sobre Rojo VIP & Canje de Código -->
 <div id="redPacketModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-rose-500/30 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative text-center">
+    <div class="bg-slate-900 border border-rose-500/30 rounded-3xl p-4 sm:p-6 max-w-sm w-full shadow-2xl relative text-center max-h-[94vh] overflow-y-auto">
         <button onclick="closeRedPacketModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white text-xl font-bold cursor-pointer">✕</button>
         
         <div class="flex items-center justify-center gap-2 mb-1">

@@ -2,7 +2,7 @@
 <html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>FORTEX ⚡ | Plataforma Oficial de Cómputo y Rendimientos</title>
     <link rel="icon" type="image/jpeg" href="{{ asset('img/fortex.jpg') }}">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,6 +14,13 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #030712;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Prevenir auto-zoom en iOS Safari */
+        @media screen and (max-width: 768px) {
+            input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+                font-size: 16px !important;
+            }
         }
         .glow-emerald {
             box-shadow: 0 0 45px -5px rgba(16, 185, 129, 0.4);
@@ -658,10 +665,10 @@
     <!-- MODAL UNIFICADO DE AUTENTICACIÓN (LOGIN & REGISTRO) -->
     <!-- ========================================== -->
     <div id="authModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <div class="bg-slate-900/95 border border-slate-800 rounded-3xl p-4 sm:p-8 max-w-md w-full shadow-2xl relative max-h-[92vh] overflow-y-auto">
             
             <!-- Botón Cerrar -->
-            <button onclick="closeAuthModal()" class="absolute right-5 top-5 text-slate-400 hover:text-white text-2xl font-bold transition">
+            <button onclick="closeAuthModal()" class="absolute right-4 top-4 sm:right-5 sm:top-5 text-slate-400 hover:text-white text-2xl font-bold transition cursor-pointer">
                 ✕
             </button>
 
@@ -773,7 +780,7 @@
 
     <!-- Modal Recuperar Contraseña por WhatsApp desde la Bienvenida -->
     <div id="welcomeForgotModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[70] hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl relative text-xs">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-4 sm:p-6 shadow-2xl relative text-xs max-h-[92vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-sm">

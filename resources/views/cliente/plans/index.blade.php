@@ -13,13 +13,13 @@
             </h1>
             <p class="text-xs text-slate-400 mt-0.5">Activa paquetes y reclama tu porcentaje cada 24 horas.</p>
         </div>
-        <div class="flex items-center gap-2.5">
-            <div class="px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl">
-                <span class="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">💳 Saldo Recargas</span>
+        <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
+            <div class="px-3 py-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl text-center sm:text-left">
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold truncate">💳 Saldo Recargas</span>
                 <p class="text-xs sm:text-sm font-black text-white font-mono">${{ number_format($rechargeBalance, 0, ',', '.') }}</p>
             </div>
-            <div class="px-3 py-1.5 bg-slate-900/90 border border-emerald-500/30 rounded-2xl">
-                <span class="text-[10px] text-emerald-400 uppercase tracking-wider block font-semibold">💎 Saldo Ganancias</span>
+            <div class="px-3 py-1.5 bg-slate-900/90 border border-emerald-500/30 rounded-2xl text-center sm:text-left">
+                <span class="text-[10px] text-emerald-400 uppercase tracking-wider block font-semibold truncate">💎 Saldo Ganancias</span>
                 <p class="text-xs sm:text-sm font-black text-emerald-400 font-mono">${{ number_format($earningsBalance, 0, ',', '.') }}</p>
             </div>
         </div>
@@ -129,7 +129,7 @@
 
     <!-- Modal Selección de Saldo para Comprar Plan -->
     <div id="chooseWalletModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative text-xs space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-4 sm:p-7 shadow-2xl relative text-xs space-y-4 max-h-[94vh] overflow-y-auto">
             <div class="flex items-start justify-between">
                 <div>
                     <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-extrabold uppercase">Activar Membresía</span>
