@@ -50,9 +50,14 @@
         </div>
 
         <div class="relative z-10 flex items-center justify-between pt-3 border-t border-slate-800/80 mt-2">
-            <div class="flex items-center gap-2">
-                <span class="text-[10px] text-slate-400">Saldo Disponible:</span>
-                <span class="text-base font-black text-emerald-400 font-mono user-balance-display transition-all duration-300">${{ number_format(Auth::user()->balance, 0, ',', '.') }} COP</span>
+            <div class="flex flex-col">
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-slate-400">Saldo Total:</span>
+                    <span class="text-base font-black text-emerald-400 font-mono user-balance-display transition-all duration-300">${{ number_format(Auth::user()->balance, 0, ',', '.') }} COP</span>
+                </div>
+                @if(Auth::user()->uninvestedDeposit() > 0)
+                    <span class="text-[9px] text-cyan-400 font-medium">Retirable (ganancias): ${{ number_format(Auth::user()->withdrawableBalance(), 0, ',', '.') }} COP</span>
+                @endif
             </div>
             <div class="flex items-center gap-2">
                 <a href="{{ route('cliente.deposits.index') }}" class="px-3 py-1 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-xl text-xs shadow-md transition active:scale-95">

@@ -14,10 +14,30 @@
             <p class="text-xs text-slate-400 mt-0.5">Transfiere tus ganancias acumuladas a tu cuenta bancaria o billetera.</p>
         </div>
         <div class="text-right">
-            <span class="text-[11px] text-slate-400">Disponible:</span>
-            <p class="text-lg font-black text-emerald-400 font-mono">${{ number_format($user->balance, 0, ',', '.') }} COP</p>
+            <span class="text-[11px] text-slate-400">Ganancias Retirables:</span>
+            <p class="text-lg font-black text-emerald-400 font-mono">${{ number_format($withdrawableBalance, 0, ',', '.') }} COP</p>
+            @if($uninvestedDeposit > 0)
+                <span class="text-[10px] text-amber-400/90 font-medium block">Recarga p/ Planes: ${{ number_format($uninvestedDeposit, 0, ',', '.') }}</span>
+            @endif
         </div>
     </div>
+
+    @if($uninvestedDeposit > 0)
+        <!-- Aviso explicativo sobre saldo de recarga vs ganancias -->
+        <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-3xl text-xs text-amber-300 space-y-1.5 shadow-lg">
+            <div class="flex items-center gap-2 font-bold text-amber-200">
+                <span>🛡️</span> Regla Oficial de Retiros
+            </div>
+            <p class="text-[11px] text-amber-300/90 leading-relaxed">
+                Solo puedes retirar las <strong>ganancias generadas</strong> (rendimientos diarios, comisiones de equipo y premios). Tienes <strong class="text-white font-mono">${{ number_format($uninvestedDeposit, 0, ',', '.') }} COP</strong> en saldo de recarga que debes destinar a <strong>activar Planes VIP</strong> para poner a producir tu dinero.
+            </p>
+            <div class="pt-1">
+                <a href="{{ route('cliente.plans.index') }}" class="inline-flex items-center gap-1 text-[11px] font-extrabold text-emerald-400 hover:text-emerald-300 underline">
+                    🚀 Ir a Activar Planes VIP con mi Saldo →
+                </a>
+            </div>
+        </div>
+    @endif
 
     <!-- Formulario de Retiro -->
     <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-4">
@@ -26,10 +46,13 @@
 
             <!-- Monto a Retirar -->
             <div>
-                <label class="block font-semibold text-slate-300 mb-1">Monto a Retirar ($ COP)</label>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="block font-semibold text-slate-300">Monto a Retirar ($ COP)</label>
+                    <span class="text-[10px] text-slate-400">Retirable: <b class="text-emerald-400 font-mono">${{ number_format($withdrawableBalance, 0, ',', '.') }}</b></span>
+                </div>
                 <div class="relative">
-                    <input type="number" id="withdraw_amount_input" step="1000" min="15000" max="{{ $user->balance }}" name="amount" required placeholder="Ej: 50000" oninput="calcWithdrawalFee()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-white font-mono text-base focus:outline-none focus:border-cyan-500">
-                    <button type="button" onclick="setMaxAmount({{ $user->balance }})" class="absolute right-3 top-2.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-bold rounded-xl transition cursor-pointer">
+                    <input type="number" id="withdraw_amount_input" step="1000" min="15000" max="{{ $withdrawableBalance }}" name="amount" required placeholder="Ej: 50000" oninput="calcWithdrawalFee()" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-white font-mono text-base focus:outline-none focus:border-cyan-500">
+                    <button type="button" onclick="setMaxAmount({{ $withdrawableBalance }})" class="absolute right-3 top-2.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-bold rounded-xl transition cursor-pointer">
                         MÁXIMO
                     </button>
                 </div>
