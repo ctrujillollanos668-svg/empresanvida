@@ -541,8 +541,8 @@
                 <span class="flex items-center gap-1.5"><span>⚡</span> Recompensas de la Ruleta</span>
                 <span class="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono">👑 Hasta $13.000 COP</span>
             </div>
-            <p class="text-slate-400 text-[10px] leading-tight">
-                💳 <strong>Por cada recarga recibes +3 Giros Gratis.</strong> Tus primeros 2 giros aseguran $1.000 COP cada uno, y el 3er giro en adelante participa aleatoriamente por todos los premios de hasta <strong class="text-emerald-400">$13.000 COP</strong>!
+            <p class="text-slate-300 text-[10px] leading-relaxed">
+                🎉 <strong>¡Premios en efectivo garantizados en cada giro!</strong> Gira la ruleta y recibe ganancias directas a tu saldo de hasta <strong class="text-emerald-400 font-bold">$13.000 COP</strong>. Recarga tu cuenta para ganar <strong class="text-cyan-300">+3 Giros Gratis</strong> o comparte tu enlace de referido para obtener más oportunidades.
             </p>
             <div class="grid grid-cols-2 gap-2 pt-1">
                 <a href="{{ route('cliente.deposits.index') }}" class="py-2 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black text-center rounded-xl text-[11px] shadow-md transition active:scale-95">

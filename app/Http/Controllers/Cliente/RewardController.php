@@ -70,18 +70,31 @@ class RewardController extends Controller
                 ['index' => 7, 'prize' => 1000,  'label' => '$1.000 COP',  'color' => '#3b82f6'],
             ];
 
-            // Contar giros anteriores del usuario
-            $previousSpinsCount = Transaction::where('user_id', $user->id)
-                ->where('type', 'roulette_reward')
-                ->count();
+            // Ponderación de probabilidades balanceada y emocionante
+            $weights = [
+                0 => 25, // $1.000 COP
+                1 => 20, // $2.000 COP
+                2 => 10, // $5.000 COP
+                3 => 6,  // $9.000 COP
+                4 => 14, // $500 COP
+                5 => 3,  // 👑 $13.000 COP (Premio Mayor VIP)
+                6 => 12, // $3.000 COP
+                7 => 10, // $1.000 COP
+            ];
 
-            if ($previousSpinsCount === 0) {
-                $selected = $segments[0]; // $1.000 COP
-            } elseif ($previousSpinsCount === 1) {
-                $selected = $segments[7]; // $1.000 COP
-            } else {
-                $selected = $segments[array_rand($segments)];
+            $totalWeight = array_sum($weights);
+            $rand = mt_rand(1, $totalWeight);
+            $current = 0;
+            $chosenIndex = 0;
+            foreach ($weights as $index => $weight) {
+                $current += $weight;
+                if ($rand <= $current) {
+                    $chosenIndex = $index;
+                    break;
+                }
             }
+
+            $selected = $segments[$chosenIndex] ?? $segments[0];
 
             $prize = $selected['prize'];
 
