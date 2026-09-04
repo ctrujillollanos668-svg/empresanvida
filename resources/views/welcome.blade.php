@@ -798,10 +798,32 @@
             <div class="space-y-3">
                 <div>
                     <label class="block font-semibold text-slate-300 uppercase tracking-wider text-[10px] mb-1">Tu Número de Celular / WhatsApp</label>
-                    <div class="flex items-center bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2.5 focus-within:border-emerald-500">
-                        <span class="text-slate-500 font-bold mr-2">🇨🇴 +57</span>
-                        <input type="tel" id="welcomeForgotPhone" placeholder="Ej: 3222216725" class="w-full bg-transparent text-white placeholder-slate-600 focus:outline-none font-mono text-xs">
+                    <div class="flex items-center bg-slate-950/80 border border-slate-800 rounded-xl focus-within:border-emerald-500 overflow-hidden">
+                        <select id="welcomeForgotCountryCode" class="bg-slate-900 text-white text-xs font-semibold px-2 sm:px-3 py-2.5 border-r border-slate-800 focus:outline-none cursor-pointer">
+                            <option value="+57" selected>🇨🇴 +57 (CO)</option>
+                            <option value="+52">🇲🇽 +52 (MX)</option>
+                            <option value="+51">🇵🇪 +51 (PE)</option>
+                            <option value="+593">🇪🇨 +593 (EC)</option>
+                            <option value="+58">🇻🇪 +58 (VE)</option>
+                            <option value="+54">🇦🇷 +54 (AR)</option>
+                            <option value="+56">🇨🇱 +56 (CL)</option>
+                            <option value="+591">🇧🇴 +591 (BO)</option>
+                            <option value="+1">🇺🇸 +1 (US)</option>
+                            <option value="+34">🇪🇸 +34 (ES)</option>
+                            <option value="+507">🇵🇦 +507 (PA)</option>
+                            <option value="+506">🇨🇷 +506 (CR)</option>
+                            <option value="+1">🇩🇴 +1 (DO)</option>
+                            <option value="+502">🇬🇹 +502 (GT)</option>
+                            <option value="+504">🇭🇳 +504 (HN)</option>
+                            <option value="+503">🇸🇻 +503 (SV)</option>
+                            <option value="+505">🇳🇮 +505 (NI)</option>
+                            <option value="+595">🇵🇾 +595 (PY)</option>
+                            <option value="+598">🇺🇾 +598 (UY)</option>
+                            <option value="+55">🇧🇷 +55 (BR)</option>
+                        </select>
+                        <input type="tel" id="welcomeForgotPhone" placeholder="Ej: 3222216725" class="w-full bg-transparent text-white placeholder-slate-600 focus:outline-none font-mono text-xs px-3 py-2.5">
                     </div>
+                    <span class="text-[10px] text-slate-500 mt-1 block">Toca la bandera para cambiar el código de país.</span>
                 </div>
 
                 <button type="button" onclick="sendWelcomeWhatsAppRecovery()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-95">
@@ -945,13 +967,21 @@
         }
 
         function sendWelcomeWhatsAppRecovery() {
+            const countryCode = document.getElementById('welcomeForgotCountryCode').value;
             const phone = document.getElementById('welcomeForgotPhone').value.trim();
             if (!phone) {
-                alert('Por favor ingresa tu número de celular o WhatsApp');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'Por favor ingresa tu número de celular o WhatsApp',
+                    customClass: { popup: 'swal-custom-dark' },
+                    confirmButtonColor: '#f59e0b'
+                });
                 return;
             }
+            const fullPhone = `${countryCode} ${phone}`;
             const supportNumber = "{{ env('SUPPORT_WHATSAPP', '573117944193') }}";
-            const msg = encodeURIComponent(`Hola Soporte FORTEX 🟢, solicito recuperar la contraseña de mi cuenta registrada con el celular: ${phone}`);
+            const msg = encodeURIComponent(`Hola Soporte FORTEX 🟢, solicito recuperar la contraseña de mi cuenta registrada con el celular: ${fullPhone}`);
             window.open(`https://api.whatsapp.com/send?phone=${supportNumber}&text=${msg}`, '_blank');
         }
 
