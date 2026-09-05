@@ -16,7 +16,7 @@ class PaymentMethodSeeder extends Seeder
             PaymentMethod::create([
                 'name' => 'Nequi',
                 'type' => 'nequi',
-                'account_number' => '3117944193',
+                'account_number' => '3115138588',
                 'account_holder' => 'Carlos Trujillo',
                 'account_type' => 'Celular',
                 'color_theme' => 'purple',

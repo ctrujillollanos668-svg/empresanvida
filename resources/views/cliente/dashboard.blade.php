@@ -382,11 +382,11 @@
         <p class="text-xs text-slate-400 mt-1 mb-4">¿Tienes dudas con tus recargas, retiros o ganancias? Contáctanos de inmediato.</p>
         
         <div class="space-y-2 text-xs">
-            <a href="https://t.me/" target="_blank" class="w-full py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-bold rounded-xl flex items-center justify-center gap-2 transition">
-                <span>✈️</span> Canal Oficial en Telegram
+            <a href="https://t.me/+{{ env('SUPPORT_TELEGRAM', '573115138588') }}" target="_blank" class="w-full py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-bold rounded-xl flex items-center justify-center gap-2 transition">
+                <span>✈️</span> Soporte Telegram (+57 311 513 8588)
             </a>
-            <a href="https://api.whatsapp.com/send?phone={{ env('SUPPORT_WHATSAPP', '573117944193') }}&text={{ urlencode('Hola Soporte FORTEX 🟢, requiero asesoría con mi cuenta.') }}" target="_blank" class="w-full py-3 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl flex items-center justify-center gap-2 transition">
-                <span>💬</span> Asesor Oficial WhatsApp
+            <a href="https://api.whatsapp.com/send?phone={{ env('SUPPORT_WHATSAPP', '573115138588') }}&text={{ urlencode('Hola Soporte FORTEX 🟢, requiero asesoría con mi cuenta.') }}" target="_blank" class="w-full py-3 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl flex items-center justify-center gap-2 transition">
+                <span>💬</span> Asesor Oficial WhatsApp (+57 311 513 8588)
             </a>
         </div>
     </div>

@@ -220,7 +220,7 @@
                 return;
             }
             const fullPhone = `${countryCode} ${phone}`;
-            const supportNumber = "{{ env('SUPPORT_WHATSAPP', '573117944193') }}";
+            const supportNumber = "{{ env('SUPPORT_WHATSAPP', '573115138588') }}";
             const msg = encodeURIComponent(`Hola Soporte FORTEX 🟢, solicito recuperar la contraseña de mi cuenta registrada con el celular: ${fullPhone}`);
             window.open(`https://api.whatsapp.com/send?phone=${supportNumber}&text=${msg}`, '_blank');
         }
